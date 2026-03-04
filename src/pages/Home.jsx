@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const FLOATING_SNIPPETS = [
@@ -97,6 +97,15 @@ const HOOKS = [
   { name: "useReducer", color: "#f000ff", desc: "Complex state transitions." },
   { name: "Custom Hook", color: "#00ffe5", desc: "Reusable logic extraction." },
 ];
+
+const PARTICLES_DATA = FLOATING_SNIPPETS.map((snippet, index) => ({
+  snippet,
+  style: {
+    left: (index * 5.1 + ((index * 17) % 9)) % 96,
+    duration: 14 + (index % 5) * 3,
+    delay: -(index * 1.8),
+  },
+}));
 
 function FloatingParticle({ snippet, style }) {
   return (
@@ -206,17 +215,6 @@ export default function Home() {
   const [query, setQuery] = useState("");
   const navigate = useNavigate();
 
-  const particlesData = useRef(
-    FLOATING_SNIPPETS.map((snippet, index) => ({
-      snippet,
-      style: {
-        left: (index * 5.1 + Math.random() * 8) % 96,
-        duration: 14 + (index % 5) * 3,
-        delay: -(index * 1.8),
-      },
-    }))
-  );
-
   const filteredChallenges = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
     return CHALLENGES.filter((challenge) => {
@@ -237,7 +235,7 @@ export default function Home() {
   return (
     <>
       <div style={{ position: "fixed", inset: 0, pointerEvents: "none", overflow: "hidden", zIndex: 1 }}>
-        {particlesData.current.map((particle, index) => (
+        {PARTICLES_DATA.map((particle, index) => (
           <FloatingParticle key={index} snippet={particle.snippet} style={particle.style} />
         ))}
       </div>

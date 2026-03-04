@@ -1,18 +1,14 @@
-/* ── Sandbox Page Styles ─────────────────────────────────────────────── */
-
-@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;600&family=Unbounded:wght@400;700;900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;600&family=Unbounded:wght@400;700;900&display=swap");
 
 .sandbox-page {
   height: 100vh;
   background: #07070f;
   display: flex;
   flex-direction: column;
-  font-family: 'Space Mono', monospace;
+  font-family: "Space Mono", monospace;
   color: #fff;
   overflow: hidden;
 }
-
-/* ── Background ──────────────────────────────────────────────────────── */
 
 .sandbox-grid-bg {
   position: fixed;
@@ -24,8 +20,6 @@
   pointer-events: none;
   z-index: 0;
 }
-
-/* ── Header ──────────────────────────────────────────────────────────── */
 
 .sandbox-header {
   position: relative;
@@ -39,14 +33,14 @@
   background: rgba(13, 13, 26, 0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-  flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .sandbox-header-left {
   display: flex;
   align-items: center;
   gap: 16px;
+  min-width: 0;
 }
 
 .sandbox-back-btn {
@@ -55,7 +49,7 @@
   color: rgba(255, 255, 255, 0.6);
   padding: 6px 14px;
   border-radius: 8px;
-  font-family: 'Space Mono', monospace;
+  font-family: "Space Mono", monospace;
   font-size: 12px;
   cursor: pointer;
   transition: all 0.2s;
@@ -71,10 +65,11 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-family: 'Unbounded', sans-serif;
+  font-family: "Unbounded", sans-serif;
   font-weight: 700;
   font-size: 14px;
   letter-spacing: 0.5px;
+  white-space: nowrap;
 }
 
 .sandbox-logo-icon {
@@ -85,12 +80,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 10px;
+  letter-spacing: 0.4px;
+  color: #05050a;
+  font-weight: 700;
   box-shadow: 0 0 12px #00ffe566;
 }
 
 .sandbox-badge {
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
   font-size: 10px;
   padding: 3px 10px;
   border-radius: 20px;
@@ -105,7 +103,27 @@
 .sandbox-header-right {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+  min-width: 0;
+}
+
+.sandbox-share-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  color: rgba(255, 255, 255, 0.72);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-family: "Fira Code", monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+
+.sandbox-share-btn:hover {
+  border-color: #00ffe5;
+  color: #00ffe5;
+  background: rgba(0, 255, 229, 0.08);
 }
 
 .sandbox-template-selector {
@@ -115,6 +133,7 @@
   padding: 4px;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.06);
+  overflow-x: auto;
 }
 
 .sandbox-template-btn {
@@ -123,7 +142,7 @@
   color: rgba(255, 255, 255, 0.4);
   padding: 6px 14px;
   border-radius: 7px;
-  font-family: 'Space Mono', monospace;
+  font-family: "Space Mono", monospace;
   font-size: 11px;
   cursor: pointer;
   transition: all 0.2s;
@@ -131,7 +150,7 @@
 }
 
 .sandbox-template-btn:hover {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.74);
   background: rgba(255, 255, 255, 0.04);
 }
 
@@ -141,8 +160,6 @@
   font-weight: 700;
   box-shadow: 0 0 14px #00ffe555;
 }
-
-/* ── Info Bar ────────────────────────────────────────────────────────── */
 
 .sandbox-info-bar {
   position: relative;
@@ -154,18 +171,22 @@
   background: rgba(0, 255, 229, 0.04);
   border-bottom: 1px solid rgba(0, 255, 229, 0.08);
   font-size: 12px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.56);
 }
 
 .sandbox-info-icon {
-  font-size: 14px;
+  font-size: 11px;
+  border: 1px solid rgba(0, 255, 229, 0.26);
+  color: #00ffe5;
+  border-radius: 4px;
+  padding: 1px 5px;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
 }
 
 .sandbox-info-text strong {
   color: #00ffe5;
 }
-
-/* ── Editor Wrapper ──────────────────────────────────────────────────── */
 
 .sandbox-editor-wrapper {
   flex: 1;
@@ -196,15 +217,13 @@
   background: #0d0d1a !important;
 }
 
-/* File explorer */
 .sandbox-editor-wrapper .sp-file-explorer {
   background: #0a0a16 !important;
   border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
   min-width: 160px;
-  max-width: 200px;
+  max-width: 220px;
 }
 
-/* Code editor */
 .sandbox-editor-wrapper .sp-code-editor {
   background: #0d0d1a !important;
 }
@@ -215,7 +234,7 @@
 }
 
 .sandbox-editor-wrapper .sp-tab-button {
-  font-family: 'Fira Code', monospace !important;
+  font-family: "Fira Code", monospace !important;
   font-size: 12px !important;
 }
 
@@ -224,7 +243,6 @@
   border-bottom-color: #00ffe5 !important;
 }
 
-/* Preview panel */
 .sandbox-editor-wrapper .sp-preview {
   background: #0d0d1a !important;
   border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
@@ -239,7 +257,6 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
 }
 
-/* Scrollbar in editor */
 .sandbox-editor-wrapper ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -255,8 +272,6 @@
   box-shadow: 0 0 6px #00ffe5;
 }
 
-/* ── Footer Tips ─────────────────────────────────────────────────────── */
-
 .sandbox-footer-tips {
   position: relative;
   z-index: 10;
@@ -268,7 +283,8 @@
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 11px;
   color: rgba(255, 255, 255, 0.35);
-  font-family: 'Fira Code', monospace;
+  font-family: "Fira Code", monospace;
+  flex-wrap: wrap;
 }
 
 .sandbox-tip {
@@ -292,30 +308,35 @@
   background: rgba(255, 255, 255, 0.1);
 }
 
-/* ── Responsive ──────────────────────────────────────────────────────── */
-
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .sandbox-header {
     height: auto;
+    min-height: 0;
     padding: 10px 16px;
-  }
-
-  .sandbox-template-selector {
     flex-wrap: wrap;
   }
 
-  .sandbox-template-btn {
-    font-size: 10px;
-    padding: 5px 10px;
+  .sandbox-header-right {
+    width: 100%;
+    justify-content: space-between;
   }
 
+  .sandbox-template-selector {
+    flex: 1;
+  }
+}
+
+@media (max-width: 768px) {
   .sandbox-layout {
     height: 100% !important;
     flex-direction: column !important;
   }
 
-  .sandbox-footer-tips {
-    flex-wrap: wrap;
-    gap: 8px;
+  .sandbox-info-bar {
+    align-items: flex-start;
+  }
+
+  .sandbox-info-text {
+    line-height: 1.45;
   }
 }
