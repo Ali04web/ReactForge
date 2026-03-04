@@ -3,7 +3,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;600&family=Unbounded:wght@400;700;900&display=swap');
 
 .sandbox-page {
-  min-height: 100vh;
+  height: 100vh;
   background: #07070f;
   display: flex;
   flex-direction: column;
@@ -35,6 +35,7 @@
   justify-content: space-between;
   padding: 0 20px;
   height: 56px;
+  min-height: 56px;
   background: rgba(13, 13, 26, 0.95);
   backdrop-filter: blur(20px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.06);
@@ -184,7 +185,7 @@
 
 .sandbox-layout {
   flex: 1 !important;
-  height: calc(100vh - 150px) !important;
+  height: 100% !important;
   border: none !important;
   border-radius: 0 !important;
 }
@@ -309,7 +310,7 @@
   }
 
   .sandbox-layout {
-    height: calc(100vh - 200px) !important;
+    height: 100% !important;
     flex-direction: column !important;
   }
 
