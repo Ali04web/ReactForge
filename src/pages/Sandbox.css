@@ -1,0 +1,320 @@
+/* ── Sandbox Page Styles ─────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Fira+Code:wght@300;400;600&family=Unbounded:wght@400;700;900&display=swap');
+
+.sandbox-page {
+  min-height: 100vh;
+  background: #07070f;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Space Mono', monospace;
+  color: #fff;
+  overflow: hidden;
+}
+
+/* ── Background ──────────────────────────────────────────────────────── */
+
+.sandbox-grid-bg {
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(0, 255, 229, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 229, 0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Header ──────────────────────────────────────────────────────────── */
+
+.sandbox-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  height: 56px;
+  background: rgba(13, 13, 26, 0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sandbox-header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.sandbox-back-btn {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  color: rgba(255, 255, 255, 0.6);
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sandbox-back-btn:hover {
+  border-color: #00ffe5;
+  color: #00ffe5;
+  background: rgba(0, 255, 229, 0.08);
+}
+
+.sandbox-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Unbounded', sans-serif;
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 0.5px;
+}
+
+.sandbox-logo-icon {
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #00ffe5, #00aaff);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  box-shadow: 0 0 12px #00ffe566;
+}
+
+.sandbox-badge {
+  font-family: 'Fira Code', monospace;
+  font-size: 10px;
+  padding: 3px 10px;
+  border-radius: 20px;
+  background: rgba(0, 255, 229, 0.15);
+  color: #00ffe5;
+  border: 1px solid rgba(0, 255, 229, 0.4);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  font-weight: 400;
+}
+
+.sandbox-header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sandbox-template-selector {
+  display: flex;
+  gap: 4px;
+  background: #0d0d1a;
+  padding: 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.sandbox-template-btn {
+  background: transparent;
+  border: none;
+  color: rgba(255, 255, 255, 0.4);
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.sandbox-template-btn:hover {
+  color: rgba(255, 255, 255, 0.7);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sandbox-template-btn.active {
+  background: #00ffe5;
+  color: #07070f;
+  font-weight: 700;
+  box-shadow: 0 0 14px #00ffe555;
+}
+
+/* ── Info Bar ────────────────────────────────────────────────────────── */
+
+.sandbox-info-bar {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(0, 255, 229, 0.04);
+  border-bottom: 1px solid rgba(0, 255, 229, 0.08);
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.sandbox-info-icon {
+  font-size: 14px;
+}
+
+.sandbox-info-text strong {
+  color: #00ffe5;
+}
+
+/* ── Editor Wrapper ──────────────────────────────────────────────────── */
+
+.sandbox-editor-wrapper {
+  flex: 1;
+  position: relative;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sandbox-editor-wrapper .sp-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.sandbox-layout {
+  flex: 1 !important;
+  height: calc(100vh - 150px) !important;
+  border: none !important;
+  border-radius: 0 !important;
+}
+
+.sandbox-editor-wrapper .sp-layout {
+  border: none !important;
+  border-radius: 0 !important;
+  background: #0d0d1a !important;
+}
+
+/* File explorer */
+.sandbox-editor-wrapper .sp-file-explorer {
+  background: #0a0a16 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+  min-width: 160px;
+  max-width: 200px;
+}
+
+/* Code editor */
+.sandbox-editor-wrapper .sp-code-editor {
+  background: #0d0d1a !important;
+}
+
+.sandbox-editor-wrapper .sp-tabs {
+  background: #161626 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+.sandbox-editor-wrapper .sp-tab-button {
+  font-family: 'Fira Code', monospace !important;
+  font-size: 12px !important;
+}
+
+.sandbox-editor-wrapper .sp-tab-button[data-active="true"] {
+  color: #00ffe5 !important;
+  border-bottom-color: #00ffe5 !important;
+}
+
+/* Preview panel */
+.sandbox-editor-wrapper .sp-preview {
+  background: #0d0d1a !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.sandbox-editor-wrapper .sp-preview-container {
+  background: #0f0f1a !important;
+}
+
+.sandbox-editor-wrapper .sp-navigator {
+  background: #161626 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+}
+
+/* Scrollbar in editor */
+.sandbox-editor-wrapper ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.sandbox-editor-wrapper ::-webkit-scrollbar-track {
+  background: #0d0d1a;
+}
+
+.sandbox-editor-wrapper ::-webkit-scrollbar-thumb {
+  background: #00ffe5;
+  border-radius: 10px;
+  box-shadow: 0 0 6px #00ffe5;
+}
+
+/* ── Footer Tips ─────────────────────────────────────────────────────── */
+
+.sandbox-footer-tips {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 10px 20px;
+  background: rgba(13, 13, 26, 0.95);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.35);
+  font-family: 'Fira Code', monospace;
+}
+
+.sandbox-tip {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.tip-key {
+  background: #1e1e32;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 10px;
+}
+
+.sandbox-tip-divider {
+  width: 1px;
+  height: 16px;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* ── Responsive ──────────────────────────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .sandbox-header {
+    height: auto;
+    padding: 10px 16px;
+  }
+
+  .sandbox-template-selector {
+    flex-wrap: wrap;
+  }
+
+  .sandbox-template-btn {
+    font-size: 10px;
+    padding: 5px 10px;
+  }
+
+  .sandbox-layout {
+    height: calc(100vh - 200px) !important;
+    flex-direction: column !important;
+  }
+
+  .sandbox-footer-tips {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
