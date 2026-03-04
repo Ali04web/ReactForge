@@ -279,7 +279,7 @@ export default function App() {
   }, [theme])
 
   return (
-    <main className={`app ${theme}`}>
+    <main className={\`app \${theme}\`}>
       <section className="panel">
         <h1>Theme Toggle</h1>
         <p>Current theme: {theme}</p>
@@ -380,7 +380,7 @@ li {
       "/App.js": `import { useEffect, useRef, useState } from 'react'
 import './styles.css'
 
-const createItems = (start, count) => Array.from({ length: count }, (_, i) => `Item ${start + i}`)
+const createItems = (start, count) => Array.from({ length: count }, (_, i) => \`Item \${ start + i}\`)
 
 export default function App() {
   const [items, setItems] = useState(() => createItems(1, 20))
@@ -419,7 +419,7 @@ export default function App() {
   )
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
+  "/styles.css": `${BASE_STYLE_FILE}
 .panel {
   width: min(500px, 100%);
   border: 1px solid #22314a;
