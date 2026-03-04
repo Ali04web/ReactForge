@@ -551,7 +551,7 @@ export default function Home() {
               Open a template, complete the challenge comments, and iterate in live preview until your answer is solid.
             </p>
             <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-              <button className="cta-btn" onClick={() => openChallenge("blank")}>
+              <button className="cta-btn" onClick={() => openChallenge("/sandbox")}>
                 Start Practicing
               </button>
               <button
