@@ -1,22 +1,23 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import {
-    SandpackProvider,
-    SandpackLayout,
-    SandpackCodeEditor,
-    SandpackPreview,
-    SandpackFileExplorer,
+  SandpackProvider,
+  SandpackLayout,
+  SandpackCodeEditor,
+  SandpackPreview,
+  SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
 import "./Sandbox.css";
 
 /* ── Template file sets ─────────────────────────────────────────────── */
 
 const TEMPLATES = {
-    blank: {
-        label: "⚛ Blank Project",
-        desc: "Empty Vite-style React starter",
-        files: {
-            "/App.jsx": `import { useState } from 'react'
+  blank: {
+    label: "⚛ Blank Project",
+    desc: "Empty Vite-style React starter",
+    files: {
+      "/App.js": { code: "", hidden: true },
+      "/App.jsx": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -28,7 +29,7 @@ export default function App() {
   )
 }
 `,
-            "/index.jsx": `import React from 'react'
+      "/index.jsx": `import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
@@ -38,7 +39,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 )
 `,
-            "/styles.css": `* {
+      "/styles.css": `* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -90,14 +91,15 @@ button:hover {
   box-shadow: 0 0 20px #00ffe555;
 }
 `,
-        },
     },
+  },
 
-    counter: {
-        label: "🔢 Counter App",
-        desc: "useState basics — increment, decrement, reset",
-        files: {
-            "/App.jsx": `import { useState } from 'react'
+  counter: {
+    label: "🔢 Counter App",
+    desc: "useState basics — increment, decrement, reset",
+    files: {
+      "/App.js": { code: "", hidden: true },
+      "/App.jsx": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -122,7 +124,7 @@ export default function App() {
   )
 }
 `,
-            "/index.jsx": `import React from 'react'
+      "/index.jsx": `import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
@@ -132,7 +134,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 )
 `,
-            "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
+      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -184,14 +186,15 @@ button:hover {
 button.reset { border-color: #f000ff; color: #f000ff; }
 button.reset:hover { background: #f000ff; color: #0f0f1a; box-shadow: 0 0 20px #f000ff55; }
 `,
-        },
     },
+  },
 
-    todo: {
-        label: "✅ Todo List",
-        desc: "CRUD operations with useState & map",
-        files: {
-            "/App.jsx": `import { useState } from 'react'
+  todo: {
+    label: "✅ Todo List",
+    desc: "CRUD operations with useState & map",
+    files: {
+      "/App.js": { code: "", hidden: true },
+      "/App.jsx": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -247,7 +250,7 @@ export default function App() {
   )
 }
 `,
-            "/index.jsx": `import React from 'react'
+      "/index.jsx": `import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
@@ -257,7 +260,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 )
 `,
-            "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
+      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -345,14 +348,15 @@ button:hover { box-shadow: 0 0 20px #00ffe555; }
   font-size: 0.9rem;
 }
 `,
-        },
     },
+  },
 
-    fetch: {
-        label: "🌐 Fetch & Display",
-        desc: "useEffect + API calls + async/await",
-        files: {
-            "/App.jsx": `import { useState, useEffect } from 'react'
+  fetch: {
+    label: "🌐 Fetch & Display",
+    desc: "useEffect + API calls + async/await",
+    files: {
+      "/App.js": { code: "", hidden: true },
+      "/App.jsx": `import { useState, useEffect } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -402,7 +406,7 @@ export default function App() {
   )
 }
 `,
-            "/index.jsx": `import React from 'react'
+      "/index.jsx": `import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
 
@@ -412,7 +416,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
   </React.StrictMode>
 )
 `,
-            "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
+      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
@@ -484,152 +488,152 @@ h1 {
 .email { color: #00ffe5; font-size: 0.85rem; margin-bottom: 0.3rem; }
 .company { color: #666; font-size: 0.8rem; }
 `,
-        },
     },
+  },
 };
 
 /* ── Sandpack Theme ─────────────────────────────────────────────────── */
 
 const REACTFORGE_THEME = {
-    colors: {
-        surface1: "#0d0d1a",
-        surface2: "#161626",
-        surface3: "#1e1e32",
-        clickable: "#999",
-        base: "#c0c0c0",
-        disabled: "#444",
-        hover: "#00ffe5",
-        accent: "#00ffe5",
-        error: "#ff3d5e",
-        errorSurface: "#1a0008",
-    },
-    syntax: {
-        plain: "#d4d4d4",
-        comment: { color: "#6a6a8a", fontStyle: "italic" },
-        keyword: "#f000ff",
-        tag: "#00aaff",
-        punctuation: "#888",
-        definition: "#00ffe5",
-        property: "#7dff00",
-        static: "#ffee00",
-        string: "#ffee00",
-    },
-    font: {
-        body: "'Space Mono', 'Fira Code', monospace",
-        mono: "'Fira Code', 'Cascadia Code', monospace",
-        size: "13px",
-        lineHeight: "1.6",
-    },
+  colors: {
+    surface1: "#0d0d1a",
+    surface2: "#161626",
+    surface3: "#1e1e32",
+    clickable: "#999",
+    base: "#c0c0c0",
+    disabled: "#444",
+    hover: "#00ffe5",
+    accent: "#00ffe5",
+    error: "#ff3d5e",
+    errorSurface: "#1a0008",
+  },
+  syntax: {
+    plain: "#d4d4d4",
+    comment: { color: "#6a6a8a", fontStyle: "italic" },
+    keyword: "#f000ff",
+    tag: "#00aaff",
+    punctuation: "#888",
+    definition: "#00ffe5",
+    property: "#7dff00",
+    static: "#ffee00",
+    string: "#ffee00",
+  },
+  font: {
+    body: "'Space Mono', 'Fira Code', monospace",
+    mono: "'Fira Code', 'Cascadia Code', monospace",
+    size: "13px",
+    lineHeight: "1.6",
+  },
 };
 
 /* ── Sandbox Page ───────────────────────────────────────────────────── */
 
 export default function Sandbox() {
-    const navigate = useNavigate();
-    const [activeTemplate, setActiveTemplate] = useState("blank");
-    const [sandpackKey, setSandpackKey] = useState(0);
+  const navigate = useNavigate();
+  const [activeTemplate, setActiveTemplate] = useState("blank");
+  const [sandpackKey, setSandpackKey] = useState(0);
 
-    const switchTemplate = (key) => {
-        setActiveTemplate(key);
-        setSandpackKey((k) => k + 1);
-    };
+  const switchTemplate = (key) => {
+    setActiveTemplate(key);
+    setSandpackKey((k) => k + 1);
+  };
 
-    const template = TEMPLATES[activeTemplate];
+  const template = TEMPLATES[activeTemplate];
 
-    return (
-        <div className="sandbox-page">
-            {/* Background effects */}
-            <div className="noise-overlay" />
-            <div className="sandbox-grid-bg" />
+  return (
+    <div className="sandbox-page">
+      {/* Background effects */}
+      <div className="noise-overlay" />
+      <div className="sandbox-grid-bg" />
 
-            {/* Top bar */}
-            <header className="sandbox-header">
-                <div className="sandbox-header-left">
-                    <button className="sandbox-back-btn" onClick={() => navigate("/")}>
-                        ← Home
-                    </button>
-                    <div className="sandbox-logo">
-                        <div className="sandbox-logo-icon">⚛</div>
-                        <span>ReactForge</span>
-                        <span className="sandbox-badge">Sandbox</span>
-                    </div>
-                </div>
-
-                <div className="sandbox-header-right">
-                    <div className="sandbox-template-selector">
-                        {Object.entries(TEMPLATES).map(([key, t]) => (
-                            <button
-                                key={key}
-                                className={`sandbox-template-btn ${activeTemplate === key ? "active" : ""}`}
-                                onClick={() => switchTemplate(key)}
-                                title={t.desc}
-                            >
-                                {t.label}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </header>
-
-            {/* Template description bar */}
-            <div className="sandbox-info-bar">
-                <span className="sandbox-info-icon">💡</span>
-                <span className="sandbox-info-text">
-                    <strong>{template.label}</strong> — {template.desc}. Edit the code on
-                    the left, see live output on the right.
-                </span>
-            </div>
-
-            {/* Sandpack editor */}
-            <div className="sandbox-editor-wrapper">
-                <SandpackProvider
-                    key={sandpackKey}
-                    template="react"
-                    theme={REACTFORGE_THEME}
-                    files={template.files}
-                    options={{
-                        activeFile: "/App.jsx",
-                        visibleFiles: Object.keys(template.files),
-                        externalResources: [
-                            "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
-                        ],
-                    }}
-                >
-                    <SandpackLayout className="sandbox-layout">
-                        <SandpackFileExplorer style={{ height: "100%" }} />
-                        <SandpackCodeEditor
-                            style={{ height: "100%" }}
-                            showLineNumbers
-                            showTabs
-                            closableTabs
-                            wrapContent
-                        />
-                        <SandpackPreview
-                            style={{ height: "100%" }}
-                            showNavigator
-                            showRefreshButton
-                        />
-                    </SandpackLayout>
-                </SandpackProvider>
-            </div>
-
-            {/* Bottom tips */}
-            <div className="sandbox-footer-tips">
-                <div className="sandbox-tip">
-                    <span className="tip-key">Ctrl+S</span> Save
-                </div>
-                <div className="sandbox-tip">
-                    <span className="tip-key">Ctrl+Z</span> Undo
-                </div>
-                <div className="sandbox-tip">
-                    <span className="tip-key">Tab</span> Indent
-                </div>
-                <div className="sandbox-tip-divider" />
-                <div className="sandbox-tip">
-                    Read the <span style={{ color: "#00ffe5" }}>🎯 Challenge</span>{" "}
-                    comments in the code for tasks to practice!
-                </div>
-            </div>
+      {/* Top bar */}
+      <header className="sandbox-header">
+        <div className="sandbox-header-left">
+          <button className="sandbox-back-btn" onClick={() => navigate("/")}>
+            ← Home
+          </button>
+          <div className="sandbox-logo">
+            <div className="sandbox-logo-icon">⚛</div>
+            <span>ReactForge</span>
+            <span className="sandbox-badge">Sandbox</span>
+          </div>
         </div>
-    );
+
+        <div className="sandbox-header-right">
+          <div className="sandbox-template-selector">
+            {Object.entries(TEMPLATES).map(([key, t]) => (
+              <button
+                key={key}
+                className={`sandbox-template-btn ${activeTemplate === key ? "active" : ""}`}
+                onClick={() => switchTemplate(key)}
+                title={t.desc}
+              >
+                {t.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </header>
+
+      {/* Template description bar */}
+      <div className="sandbox-info-bar">
+        <span className="sandbox-info-icon">💡</span>
+        <span className="sandbox-info-text">
+          <strong>{template.label}</strong> — {template.desc}. Edit the code on
+          the left, see live output on the right.
+        </span>
+      </div>
+
+      {/* Sandpack editor */}
+      <div className="sandbox-editor-wrapper">
+        <SandpackProvider
+          key={sandpackKey}
+          template="react"
+          theme={REACTFORGE_THEME}
+          files={template.files}
+          options={{
+            activeFile: "/App.jsx",
+            visibleFiles: Object.keys(template.files).filter(f => f !== "/App.js"),
+            externalResources: [
+              "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
+            ],
+          }}
+        >
+          <SandpackLayout className="sandbox-layout">
+            <SandpackFileExplorer style={{ height: "100%" }} />
+            <SandpackCodeEditor
+              style={{ height: "100%" }}
+              showLineNumbers
+              showTabs
+              closableTabs
+              wrapContent
+            />
+            <SandpackPreview
+              style={{ height: "100%" }}
+              showNavigator
+              showRefreshButton
+            />
+          </SandpackLayout>
+        </SandpackProvider>
+      </div>
+
+      {/* Bottom tips */}
+      <div className="sandbox-footer-tips">
+        <div className="sandbox-tip">
+          <span className="tip-key">Ctrl+S</span> Save
+        </div>
+        <div className="sandbox-tip">
+          <span className="tip-key">Ctrl+Z</span> Undo
+        </div>
+        <div className="sandbox-tip">
+          <span className="tip-key">Tab</span> Indent
+        </div>
+        <div className="sandbox-tip-divider" />
+        <div className="sandbox-tip">
+          Read the <span style={{ color: "#00ffe5" }}>🎯 Challenge</span>{" "}
+          comments in the code for tasks to practice!
+        </div>
+      </div>
+    </div>
+  );
 }
