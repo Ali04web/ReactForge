@@ -551,8 +551,8 @@ export default function Home() {
               Open a template, complete the challenge comments, and iterate in live preview until your answer is solid.
             </p>
             <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-              <button className="cta-btn" onClick={() => openChallenge("counter")}>
-                Start with Counter
+              <button className="cta-btn" onClick={() => openChallenge("blank")}>
+                Start Practicing
               </button>
               <button
                 className="ghost-btn"
@@ -567,16 +567,30 @@ export default function Home() {
 
       <footer className="site-footer">
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <span style={{ fontFamily: "'Unbounded', sans-serif", fontSize: "12px", fontWeight: 700 }}>ReactForge</span>
+          <span style={{ fontFamily: "'Unbounded', sans-serif", fontSize: "16px", fontWeight: 700, color: "#fff" }}>ReactForge</span>
         </div>
         <p
           style={{
-            fontSize: "12px",
-            color: "rgba(255,255,255,0.25)",
+            fontSize: "14px",
+            color: "rgba(255,255,255,0.6)",
             fontFamily: "'Fira Code', monospace",
           }}
         >
-          Built for daily React practice.
+          Built for daily React practice. 
+          <br />
+          Made by{" "}
+          <a
+            href="https://x.com/alivldm"
+            target="_blank"
+            rel="noreferrer"
+            style={{
+              color: "#aae0ff",
+              textDecoration: "none",
+              fontWeight: "bold",
+            }}
+          >
+            AH
+          </a>
         </p>
       </footer>
     </>

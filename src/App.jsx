@@ -419,12 +419,13 @@ export default function App() {
 
         .site-footer {
           border-top: 1px solid rgba(255,255,255,0.05);
-          padding: 30px clamp(20px,5vw,80px);
+          padding: 40px clamp(20px,5vw,80px);
           display: flex;
+          flex-direction: column;
           align-items: center;
-          justify-content: space-between;
-          flex-wrap: wrap;
-          gap: 12px;
+          justify-content: center;
+          text-align: center;
+          gap: 16px;
           position: relative;
           z-index: 2;
         }
