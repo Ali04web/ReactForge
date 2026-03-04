@@ -141,7 +141,7 @@ export default function Home() {
           </div>
 
           {/* Code window */}
-          <div className="code-window" style={{ transform: "perspective(1000px) rotateY(-4deg) rotateX(2deg) translate(40px, -30px)" }}>
+          <div className="code-window" style={{ transform: "perspective(1000px) rotateY(-4deg) rotateX(2deg) translate(30px, -30px)" }}>
             <div className="code-titlebar">
               <div className="dot" style={{ background: "#ff5f57" }} />
               <div className="dot" style={{ background: "#febc2e" }} />
