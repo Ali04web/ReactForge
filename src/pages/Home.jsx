@@ -141,7 +141,7 @@ export default function Home() {
           </div>
 
           {/* Code window */}
-          <div className="code-window" style={{ transform: "perspective(1000px) rotateY(-4deg) rotateX(2deg)" }}>
+          <div className="code-window" style={{ transform: "perspective(1000px) rotateY(-4deg) rotateX(2deg) translate(40px, -30px)" }}>
             <div className="code-titlebar">
               <div className="dot" style={{ background: "#ff5f57" }} />
               <div className="dot" style={{ background: "#febc2e" }} />
@@ -200,7 +200,7 @@ export default function Home() {
         </section>
 
         {/* HOOKS SECTION */}
-        <section style={{ padding: "80px clamp(20px,5vw,80px)", background: "#0a0a16" }}>
+        <section id="hooks" style={{ padding: "80px clamp(20px,5vw,80px)" }}>
           <div style={{ maxWidth: "1200px", margin: "0 auto" }}>
             <div style={{ textAlign: "center", marginBottom: "50px" }}>
               <p style={{ color: "#f000ff", fontSize: "12px", letterSpacing: "3px", textTransform: "uppercase", marginBottom: "8px", fontFamily: "'Fira Code', monospace", textShadow: "0 0 10px #f000ff" }}>// most asked in interviews</p>
@@ -258,17 +258,17 @@ export default function Home() {
           <span style={{ fontFamily: "'Unbounded', sans-serif", fontSize: "12px", fontWeight: 700 }}>ReactForge</span>
         </div>
         <p
-  style={{
-    fontSize: "12px",
-    color: "rgba(255,255,255,0.25)",
-    fontFamily: "'Fira Code', monospace",
-  }}
->
-  {"// built for devs, by "}
-  <a href="https://x.com/alivldm" target="_blank" rel="noopener noreferrer">
-    Dev
-  </a>
-</p>
+          style={{
+            fontSize: "12px",
+            color: "rgba(255,255,255,0.25)",
+            fontFamily: "'Fira Code', monospace",
+          }}
+        >
+          {"// built for devs, by "}
+          <a href="https://x.com/alivldm" target="_blank" rel="noopener noreferrer">
+            Dev
+          </a>
+        </p>
       </footer>
     </>
   );
