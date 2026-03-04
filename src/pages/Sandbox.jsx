@@ -10,14 +10,15 @@ import {
 import "./Sandbox.css";
 
 /* ── Template file sets ─────────────────────────────────────────────── */
+/* Files use /App.js (not .jsx) so they properly override the default
+   react template's App.js and get resolved by its index.js entry.     */
 
 const TEMPLATES = {
   blank: {
     label: "⚛ Blank Project",
     desc: "Empty Vite-style React starter",
     files: {
-      "/App.js": { code: "", hidden: true },
-      "/App.jsx": `import { useState } from 'react'
+      "/App.js": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -28,16 +29,6 @@ export default function App() {
     </div>
   )
 }
-`,
-      "/index.jsx": `import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
 `,
       "/styles.css": `* {
   margin: 0;
@@ -98,8 +89,7 @@ button:hover {
     label: "🔢 Counter App",
     desc: "useState basics — increment, decrement, reset",
     files: {
-      "/App.js": { code: "", hidden: true },
-      "/App.jsx": `import { useState } from 'react'
+      "/App.js": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -123,16 +113,6 @@ export default function App() {
     </div>
   )
 }
-`,
-      "/index.jsx": `import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
 `,
       "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -193,8 +173,7 @@ button.reset:hover { background: #f000ff; color: #0f0f1a; box-shadow: 0 0 20px #
     label: "✅ Todo List",
     desc: "CRUD operations with useState & map",
     files: {
-      "/App.js": { code: "", hidden: true },
-      "/App.jsx": `import { useState } from 'react'
+      "/App.js": `import { useState } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -249,16 +228,6 @@ export default function App() {
     </div>
   )
 }
-`,
-      "/index.jsx": `import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
 `,
       "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -355,8 +324,7 @@ button:hover { box-shadow: 0 0 20px #00ffe555; }
     label: "🌐 Fetch & Display",
     desc: "useEffect + API calls + async/await",
     files: {
-      "/App.js": { code: "", hidden: true },
-      "/App.jsx": `import { useState, useEffect } from 'react'
+      "/App.js": `import { useState, useEffect } from 'react'
 import './styles.css'
 
 export default function App() {
@@ -405,16 +373,6 @@ export default function App() {
     </div>
   )
 }
-`,
-      "/index.jsx": `import React from 'react'
-import ReactDOM from 'react-dom/client'
-import App from './App'
-
-ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-)
 `,
       "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -592,8 +550,8 @@ export default function Sandbox() {
           theme={REACTFORGE_THEME}
           files={template.files}
           options={{
-            activeFile: "/App.jsx",
-            visibleFiles: Object.keys(template.files).filter(f => f !== "/App.js"),
+            activeFile: "/App.js",
+            visibleFiles: ["/App.js", "/styles.css"],
             externalResources: [
               "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
             ],
