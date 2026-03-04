@@ -5,9 +5,12 @@ import {
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
+  SandpackFileExplorer,
+  useSandpack,
 } from "@codesandbox/sandpack-react";
 import "./Sandbox.css";
 
+/* ─── constants ───────────────────────────────────────────────── */
 const DEFAULT_TEMPLATE_KEY = "blank";
 const TEMPLATE_STORAGE_KEY = "reactforge_active_template";
 
@@ -32,10 +35,11 @@ body {
 }
 `;
 
+/* ─── template library ────────────────────────────────────────── */
 const TEMPLATE_LIBRARY = {
   blank: {
-    label: "Blank Project",
-    desc: "Empty React starter with live preview.",
+    label: "Blank",
+    icon: "⚛",
     files: {
       "/App.js": `import './styles.css'
 
@@ -57,8 +61,8 @@ h1 {
     },
   },
   counter: {
-    label: "Counter App",
-    desc: "useState basics with increment, decrement, and reset.",
+    label: "Counter",
+    icon: "🔢",
     files: {
       "/App.js": `import { useState } from 'react'
 import './styles.css'
@@ -108,8 +112,8 @@ button {
     },
   },
   todo: {
-    label: "Todo List",
-    desc: "CRUD operations with useState and map.",
+    label: "Todo",
+    icon: "✅",
     files: {
       "/App.js": `import { useState } from 'react'
 import './styles.css'
@@ -187,8 +191,8 @@ li {
     },
   },
   fetch: {
-    label: "Fetch and Display",
-    desc: "useEffect with API calls and loading states.",
+    label: "Fetch",
+    icon: "🌐",
     files: {
       "/App.js": `import { useEffect, useState } from 'react'
 import './styles.css'
@@ -248,6 +252,7 @@ article {
   },
 };
 
+/* ─── challenge library ───────────────────────────────────────── */
 const CHALLENGE_LIBRARY = {
   counter: {
     title: "Counter App",
@@ -260,7 +265,7 @@ const CHALLENGE_LIBRARY = {
     solutionFiles: TEMPLATE_LIBRARY.todo.files,
   },
   fetch: {
-    title: "Fetch and Display",
+    title: "Fetch & Display",
     hint: "Use useEffect to fetch data once and render loading and success states.",
     solutionFiles: TEMPLATE_LIBRARY.fetch.files,
   },
@@ -419,7 +424,7 @@ export default function App() {
   )
 }
 `,
-  "/styles.css": `${BASE_STYLE_FILE}
+      "/styles.css": `${BASE_STYLE_FILE}
 .panel {
   width: min(500px, 100%);
   border: 1px solid #22314a;
@@ -451,13 +456,7 @@ li {
   },
 };
 
-const SANDBOX_DEPENDENCIES = [
-  { name: "react", version: "^19.0.0" },
-  { name: "react-dom", version: "^19.0.0" },
-  { name: "react-router-dom", version: "^7.0.0" },
-  { name: "@codesandbox/sandpack-react", version: "^2.0.0" },
-];
-
+/* ─── theme ───────────────────────────────────────────────────── */
 const REACTFORGE_THEME = {
   colors: {
     surface1: "#06080f",
@@ -490,8 +489,11 @@ const REACTFORGE_THEME = {
   },
 };
 
-const isValidTemplate = (key) => Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATE_LIBRARY, key));
-const isValidChallenge = (key) => Boolean(key && Object.prototype.hasOwnProperty.call(CHALLENGE_LIBRARY, key));
+/* ─── helpers ─────────────────────────────────────────────────── */
+const isValidTemplate = (key) =>
+  Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATE_LIBRARY, key));
+const isValidChallenge = (key) =>
+  Boolean(key && Object.prototype.hasOwnProperty.call(CHALLENGE_LIBRARY, key));
 
 const makeChallengeStarterFiles = (title) => ({
   "/App.js": `import './styles.css'
@@ -501,7 +503,7 @@ export default function App() {
     <main className="app">
       <section className="panel">
         <h1>${title}</h1>
-        <p>Start with a blank canvas. Use the hint bar above to guide your implementation.</p>
+        <p>Start with a blank canvas. Use the hint bar above to guide you.</p>
       </section>
     </main>
   )
@@ -516,28 +518,61 @@ export default function App() {
   padding: 26px;
   text-align: left;
 }
-h1 {
-  margin-bottom: 10px;
-}
-p {
-  color: #a4b5d3;
-  line-height: 1.6;
-}
+h1 { margin-bottom: 10px; }
+p { color: #a4b5d3; line-height: 1.6; }
 `,
 });
 
-function ExplorerSection({ title, isOpen, onToggle, children }) {
-  return (
-    <section className="ide-section">
-      <button type="button" className="ide-section-toggle" onClick={onToggle}>
-        <span className="ide-arrow">{isOpen ? "v" : ">"}</span>
-        <span>{title}</span>
+/* ─── NewFileButton (inner – needs useSandpack) ───────────────── */
+function NewFileButton() {
+  const { sandpack } = useSandpack();
+  const [showInput, setShowInput] = useState(false);
+  const [fileName, setFileName] = useState("");
+
+  const createFile = () => {
+    const name = fileName.trim();
+    if (!name) return;
+    const path = name.startsWith("/") ? name : `/${name}`;
+    sandpack.addFile(path, "");
+    sandpack.openFile(path);
+    setFileName("");
+    setShowInput(false);
+  };
+
+  if (!showInput) {
+    return (
+      <button
+        type="button"
+        className="new-file-btn"
+        onClick={() => setShowInput(true)}
+        title="New file"
+      >
+        +
       </button>
-      {isOpen ? <div className="ide-section-body">{children}</div> : null}
-    </section>
+    );
+  }
+
+  return (
+    <div className="new-file-input-row">
+      <input
+        className="new-file-input"
+        value={fileName}
+        onChange={(e) => setFileName(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") createFile();
+          if (e.key === "Escape") { setShowInput(false); setFileName(""); }
+        }}
+        placeholder="filename.js"
+        autoFocus
+      />
+      <button type="button" className="new-file-confirm" onClick={createFile}>
+        ✓
+      </button>
+    </div>
   );
 }
 
+/* ─── main Sandbox component ──────────────────────────────────── */
 export default function Sandbox() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -549,28 +584,17 @@ export default function Sandbox() {
     if (isValidChallenge(challengeFromUrl)) {
       return { mode: "challenge", key: challengeFromUrl };
     }
-
     if (isValidTemplate(templateFromUrl)) {
       return { mode: "template", key: templateFromUrl };
     }
-
     const fromStorage = localStorage.getItem(TEMPLATE_STORAGE_KEY);
     if (isValidTemplate(fromStorage)) {
       return { mode: "template", key: fromStorage };
     }
-
     return { mode: "template", key: DEFAULT_TEMPLATE_KEY };
   });
 
-  const [shareCopied, setShareCopied] = useState(false);
-  const [dependencyQuery, setDependencyQuery] = useState("");
   const [allSolutionsUnlocked, setAllSolutionsUnlocked] = useState(false);
-  const [sections, setSections] = useState({
-    sandboxInfo: true,
-    nodebox: true,
-    dependencies: false,
-    outline: false,
-  });
 
   const isChallengeMode = sandboxState.mode === "challenge";
   const activeTemplate = isChallengeMode ? DEFAULT_TEMPLATE_KEY : sandboxState.key;
@@ -582,12 +606,14 @@ export default function Sandbox() {
       if (allSolutionsUnlocked) return activeChallenge.solutionFiles;
       return makeChallengeStarterFiles(activeChallenge.title);
     }
-
     return activeTemplateData.files;
   }, [activeChallenge, activeTemplateData.files, allSolutionsUnlocked, isChallengeMode]);
 
-  const activeLabel = isChallengeMode ? activeChallenge.title : activeTemplateData.label;
+  const activeLabel = isChallengeMode
+    ? activeChallenge.title
+    : activeTemplateData.label;
 
+  /* sync URL */
   useEffect(() => {
     if (isChallengeMode) {
       if (searchParams.get("challenge") !== sandboxState.key || searchParams.get("template")) {
@@ -595,229 +621,149 @@ export default function Sandbox() {
       }
       return;
     }
-
     if (searchParams.get("template") !== sandboxState.key || searchParams.get("challenge")) {
       setSearchParams({ template: sandboxState.key }, { replace: true });
     }
   }, [isChallengeMode, sandboxState.key, searchParams, setSearchParams]);
 
+  /* persist last template */
   useEffect(() => {
     if (!isChallengeMode) {
       localStorage.setItem(TEMPLATE_STORAGE_KEY, sandboxState.key);
     }
   }, [isChallengeMode, sandboxState.key]);
 
-  const setSectionOpen = (sectionName) => {
-    setSections((prev) => ({ ...prev, [sectionName]: !prev[sectionName] }));
-  };
-
   const openTemplate = (templateKey) => {
     if (!isValidTemplate(templateKey)) return;
+    setAllSolutionsUnlocked(false);
     setSandboxState({ mode: "template", key: templateKey });
   };
 
   const openChallenge = (challengeKey) => {
     if (!isValidChallenge(challengeKey)) return;
+    setAllSolutionsUnlocked(false);
     setSandboxState({ mode: "challenge", key: challengeKey });
   };
-
-  const copyShareUrl = async () => {
-    const query = isChallengeMode ? `challenge=${sandboxState.key}` : `template=${sandboxState.key}`;
-    const shareUrl = `${window.location.origin}/sandbox?${query}`;
-
-    try {
-      await navigator.clipboard.writeText(shareUrl);
-      setShareCopied(true);
-      window.setTimeout(() => setShareCopied(false), 1200);
-    } catch {
-      setShareCopied(false);
-    }
-  };
-
-  const filteredDependencies = SANDBOX_DEPENDENCIES.filter((dep) =>
-    dep.name.toLowerCase().includes(dependencyQuery.trim().toLowerCase())
-  );
-
-  const visibleFiles = Object.keys(editorFiles).map((file) => file.replace("/", ""));
 
   return (
     <div className="sandbox-page">
       <div className="noise-overlay" />
       <div className="sandbox-grid-bg" />
 
+      {/* ── header ── */}
       <header className="sandbox-header">
         <div className="sandbox-header-left">
-          <button className="sandbox-back-btn" onClick={() => navigate("/")}>Home</button>
+          <button className="sandbox-back-btn" onClick={() => navigate("/")}>
+            ← Home
+          </button>
           <div className="sandbox-logo">
             <div className="sandbox-logo-icon">RF</div>
-            <span>{isChallengeMode ? "Challenge" : "Sandbox"}</span>
+            <span className="sandbox-logo-text">Sandbox</span>
           </div>
         </div>
 
-        <div className="sandbox-header-right">
-          <span className="sandbox-active-label">{activeLabel}</span>
-          <button className="sandbox-share-btn" onClick={copyShareUrl}>
-            {shareCopied ? "Copied" : "Copy Link"}
-          </button>
+        {/* template tabs */}
+        <div className="template-tabs">
+          {Object.entries(TEMPLATE_LIBRARY).map(([key, tmpl]) => (
+            <button
+              key={key}
+              type="button"
+              className={`template-tab ${!isChallengeMode && activeTemplate === key ? "active" : ""}`}
+              onClick={() => openTemplate(key)}
+            >
+              <span className="template-tab-icon">{tmpl.icon}</span>
+              {tmpl.label}
+            </button>
+          ))}
+          <span className="template-tabs-divider" />
+          {Object.entries(CHALLENGE_LIBRARY).slice(0, 3).map(([key, ch]) => (
+            <button
+              key={key}
+              type="button"
+              className={`template-tab challenge-tab ${isChallengeMode && sandboxState.key === key ? "active" : ""}`}
+              onClick={() => openChallenge(key)}
+            >
+              🎯 {ch.title}
+            </button>
+          ))}
         </div>
+
+        <span className="sandbox-active-label">{activeLabel}</span>
       </header>
 
-      <div className="sandbox-workbench">
-        <aside className="ide-sidebar">
-          <div className="ide-rail">
-            <button className="ide-rail-btn active" type="button">EX</button>
-            <button className="ide-rail-btn" type="button">SR</button>
-            <button className="ide-rail-btn" type="button">GL</button>
-            <button className="ide-rail-btn" type="button">GH</button>
+      {/* ── challenge hint bar ── */}
+      {isChallengeMode && activeChallenge ? (
+        <div className="challenge-hint-bar">
+          <div className="hint-content">
+            <span className="hint-chip">💡 Hint</span>
+            <p>{activeChallenge.hint}</p>
           </div>
-
-          <div className="ide-explorer">
-            <div className="ide-explorer-header">
-              <span>EXPLORER</span>
-              <span>...</span>
-            </div>
-
-            <ExplorerSection
-              title="SANDBOX INFO"
-              isOpen={sections.sandboxInfo}
-              onToggle={() => setSectionOpen("sandboxInfo")}
-            >
-              <p className="info-line">Mode: {isChallengeMode ? "Challenge" : "Template"}</p>
-              <p className="info-line">Active: {activeLabel}</p>
-              <div className="mode-actions">
-                <button
-                  type="button"
-                  className={`mode-btn ${!isChallengeMode && activeTemplate === "blank" ? "active" : ""}`}
-                  onClick={() => openTemplate("blank")}
-                >
-                  Blank Sandbox
-                </button>
-                <button
-                  type="button"
-                  className={`mode-btn ${isChallengeMode && sandboxState.key === "counter" ? "active" : ""}`}
-                  onClick={() => openChallenge("counter")}
-                >
-                  Counter Challenge
-                </button>
-                <button
-                  type="button"
-                  className={`mode-btn ${isChallengeMode && sandboxState.key === "todo" ? "active" : ""}`}
-                  onClick={() => openChallenge("todo")}
-                >
-                  Todo Challenge
-                </button>
-                <button
-                  type="button"
-                  className={`mode-btn ${isChallengeMode && sandboxState.key === "fetch" ? "active" : ""}`}
-                  onClick={() => openChallenge("fetch")}
-                >
-                  Fetch Challenge
-                </button>
-              </div>
-            </ExplorerSection>
-
-            <ExplorerSection
-              title="NODEBOX"
-              isOpen={sections.nodebox}
-              onToggle={() => setSectionOpen("nodebox")}
-            >
-              <div className="file-node folder">public</div>
-              {visibleFiles.map((file) => (
-                <div key={file} className="file-node file">{file}</div>
-              ))}
-              <div className="file-node file">package.json</div>
-            </ExplorerSection>
-
-            <ExplorerSection
-              title="DEPENDENCIES"
-              isOpen={sections.dependencies}
-              onToggle={() => setSectionOpen("dependencies")}
-            >
-              <input
-                className="dependency-search"
-                placeholder="Search..."
-                value={dependencyQuery}
-                onChange={(event) => setDependencyQuery(event.target.value)}
-              />
-              <div className="dependency-list">
-                {filteredDependencies.map((dep) => (
-                  <div key={dep.name} className="dependency-item">
-                    <span>{dep.name}</span>
-                    <span className="dependency-version">{dep.version}</span>
-                  </div>
-                ))}
-              </div>
-            </ExplorerSection>
-
-            <ExplorerSection
-              title="OUTLINE"
-              isOpen={sections.outline}
-              onToggle={() => setSectionOpen("outline")}
-            >
-              <div className="file-node file">root</div>
-            </ExplorerSection>
-          </div>
-        </aside>
-
-        <div className="ide-main">
-          {isChallengeMode && activeChallenge ? (
-            <div className="challenge-hint-bar">
-              <div>
-                <span className="hint-chip">Hint</span>
-                <p>{activeChallenge.hint}</p>
-              </div>
-              <button
-                type="button"
-                className="unlock-btn"
-                onClick={() => setAllSolutionsUnlocked(true)}
-                disabled={allSolutionsUnlocked}
-              >
-                {allSolutionsUnlocked ? "All Solutions Unlocked" : "Unlock All Challenge Answers"}
-              </button>
-            </div>
-          ) : null}
-
-          <div className="sandbox-editor-wrapper">
-            <SandpackProvider
-              key={`${sandboxState.mode}-${sandboxState.key}-${allSolutionsUnlocked ? "unlocked" : "locked"}`}
-              template="react"
-              theme={REACTFORGE_THEME}
-              files={editorFiles}
-              options={{
-                activeFile: "/App.js",
-                visibleFiles: ["/App.js", "/styles.css"],
-                externalResources: [
-                  "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
-                ],
-              }}
-            >
-              <SandpackLayout className="sandbox-layout">
-                <SandpackCodeEditor
-                  className="sandbox-code-editor"
-                  style={{ height: "100%" }}
-                  showLineNumbers
-                  showTabs
-                  closableTabs
-                  wrapContent
-                />
-                <SandpackPreview
-                  className="sandbox-live-preview"
-                  style={{ height: "100%" }}
-                  showNavigator
-                  showRefreshButton
-                />
-              </SandpackLayout>
-            </SandpackProvider>
-          </div>
+          <button
+            type="button"
+            className="unlock-btn"
+            onClick={() => setAllSolutionsUnlocked(true)}
+            disabled={allSolutionsUnlocked}
+          >
+            {allSolutionsUnlocked ? "✓ Solution Loaded" : "Show Solution"}
+          </button>
         </div>
+      ) : null}
+
+      {/* ── workbench ── */}
+      <div className="sandbox-workbench">
+        <SandpackProvider
+          key={`${sandboxState.mode}-${sandboxState.key}-${allSolutionsUnlocked ? "u" : "l"}`}
+          template="react"
+          theme={REACTFORGE_THEME}
+          files={editorFiles}
+          options={{
+            activeFile: "/App.js",
+            visibleFiles: ["/App.js", "/styles.css"],
+            externalResources: [
+              "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
+            ],
+          }}
+        >
+          <div className="sandbox-ide-grid">
+            {/* sidebar – file explorer */}
+            <aside className="ide-sidebar">
+              <div className="explorer-header">
+                <span>EXPLORER</span>
+                <NewFileButton />
+              </div>
+              <SandpackFileExplorer
+                autoHiddenFiles
+                style={{ flex: 1, minHeight: 0 }}
+              />
+            </aside>
+
+            {/* editor + preview */}
+            <SandpackLayout className="sandbox-layout">
+              <SandpackCodeEditor
+                style={{ height: "100%" }}
+                showLineNumbers
+                showTabs
+                closableTabs
+                wrapContent
+              />
+              <SandpackPreview
+                style={{ height: "100%" }}
+                showNavigator
+                showRefreshButton
+                showOpenInCodeSandbox={false}
+              />
+            </SandpackLayout>
+          </div>
+        </SandpackProvider>
       </div>
 
+      {/* ── footer ── */}
       <div className="sandbox-footer-tips">
         <div className="sandbox-tip"><span className="tip-key">Ctrl+S</span> Save</div>
         <div className="sandbox-tip"><span className="tip-key">Ctrl+Z</span> Undo</div>
         <div className="sandbox-tip"><span className="tip-key">Tab</span> Indent</div>
         <div className="sandbox-tip-divider" />
-        <div className="sandbox-tip">Live preview updates as you edit files.</div>
+        <div className="sandbox-tip">Live preview updates as you type.</div>
       </div>
     </div>
   );
