@@ -247,7 +247,7 @@ function HomeWithNav() {
         </div>
         <div style={{ display: "flex", gap: "28px" }}>
           <button className="nav-link" onClick={() => document.getElementById('challenges')?.scrollIntoView({ behavior: 'smooth' })}>Challenges</button>
-          <button className="nav-link" onClick={() => document.getElementById('hooks')?.scrollIntoView({ behavior: 'smooth' })}>Hooks Guide</button>
+          <button className="nav-link" onClick={() => document.getElementById('hooks')?.scrollIntoView({ behavior: 'smooth' })}>HooksGuide</button>
           <button className="nav-link" onClick={() => navigate('/sandbox')}>Sandbox</button>
         </div>
         <button className="cta-btn" style={{ padding: "8px 22px", fontSize: "12px", animation: "none" }} onClick={() => navigate('/sandbox')}>Start Coding →</button>

@@ -257,7 +257,18 @@ export default function Home() {
           <span style={{ fontSize: "18px" }}>⚛</span>
           <span style={{ fontFamily: "'Unbounded', sans-serif", fontSize: "12px", fontWeight: 700 }}>ReactForge</span>
         </div>
-        <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.25)", fontFamily: "'Fira Code', monospace" }}>{"// built for devs, by devs"}</p>
+        <p
+  style={{
+    fontSize: "12px",
+    color: "rgba(255,255,255,0.25)",
+    fontFamily: "'Fira Code', monospace",
+  }}
+>
+  {"// built for devs, by "}
+  <a href="https://x.com/alivldm" target="_blank" rel="noopener noreferrer">
+    Dev
+  </a>
+</p>
       </footer>
     </>
   );
