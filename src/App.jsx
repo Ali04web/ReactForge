@@ -1,4 +1,5 @@
-import { Routes, Route } from "react-router-dom";
+import { useState } from "react";
+import { Routes, Route, useNavigate } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Sandbox from "./pages/Sandbox.jsx";
 
@@ -10,113 +11,51 @@ export default function App() {
 
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+        :root {
+          --bg: #07070f;
+          --panel: #0d0d1a;
+          --panel-2: #161626;
+          --line: rgba(255,255,255,0.08);
+          --text-soft: rgba(255,255,255,0.6);
+          --text-dim: rgba(255,255,255,0.4);
+          --accent: #00ffe5;
+          --accent-2: #00aaff;
+          --accent-magenta: #f000ff;
+        }
+
         body {
-          background: #07070f;
+          background: var(--bg);
           color: #fff;
           font-family: 'Space Mono', monospace;
           overflow-x: hidden;
+          min-height: 100vh;
         }
 
-        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #0d0d1a; }
-        ::-webkit-scrollbar-thumb { background: #00ffe5; border-radius: 10px; box-shadow: 0 0 8px #00ffe5; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #00ffe5; }
 
         @keyframes floatUp {
           0% { transform: translateY(0) rotate(-2deg); opacity: 0; }
           10% { opacity: 1; }
-          90% { opacity: 0.6; }
+          90% { opacity: 0.55; }
           100% { transform: translateY(-100vh) rotate(4deg); opacity: 0; }
         }
 
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
-        .cursor-blink { animation: blink 1s step-end infinite; color: #00ffe5; text-shadow: 0 0 8px #00ffe5; }
-
         @keyframes pulseGlow {
           0%,100% { box-shadow: 0 0 20px #00ffe577, 0 0 40px #00ffe522; }
           50% { box-shadow: 0 0 60px #00ffe5cc, 0 0 100px #00ffe544; }
         }
-
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
-        @keyframes fadeInScale { from{opacity:0;transform:scale(0.9)} to{opacity:1;transform:scale(1)} }
+        @keyframes fadeInScale { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
         @keyframes scanline {
           0% { transform: translateY(-100%); }
           100% { transform: translateY(100vh); }
         }
 
-        .hero-title {
-          font-family: 'Unbounded', sans-serif;
-          font-size: clamp(2.4rem, 6vw, 5rem);
-          font-weight: 900;
-          line-height: 1.1;
-          letter-spacing: -1px;
-          animation: slideIn 0.8s ease both;
-        }
-
-        .hero-sub {
-          animation: slideIn 0.8s ease 0.2s both;
-        }
-
-        .cta-btn {
-          animation: slideIn 0.8s ease 0.4s both;
-          background: linear-gradient(135deg, #00ffe5, #00aaff);
-          color: #07070f;
-          border: none;
-          padding: 14px 36px;
-          font-family: 'Space Mono', monospace;
-          font-weight: 700;
-          font-size: 14px;
-          border-radius: 50px;
-          cursor: pointer;
-          transition: all 0.25s;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-          animation: pulseGlow 3s ease-in-out infinite, slideIn 0.8s ease 0.4s both;
-        }
-        .cta-btn:hover { transform: scale(1.07); filter: brightness(1.15); }
-
-        .ghost-btn {
-          background: transparent;
-          color: #fff;
-          border: 1px solid rgba(255,255,255,0.2);
-          padding: 14px 36px;
-          font-family: 'Space Mono', monospace;
-          font-weight: 400;
-          font-size: 14px;
-          border-radius: 50px;
-          cursor: pointer;
-          transition: all 0.25s;
-          letter-spacing: 1px;
-          text-transform: uppercase;
-        }
-        .ghost-btn:hover { border-color: #00ffe5; color: #00ffe5; background: #00ffe518; box-shadow: 0 0 20px #00ffe522; }
-
-        .tab-btn {
-          background: transparent;
-          border: none;
-          font-family: 'Space Mono', monospace;
-          font-size: 13px;
-          padding: 10px 24px;
-          border-radius: 30px;
-          cursor: pointer;
-          transition: all 0.25s;
-          letter-spacing: 0.5px;
-        }
-
-        .challenges-grid {
-          display: grid;
-          grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-          gap: 18px;
-        }
-
-        .stat-card {
-          text-align: center;
-          padding: 28px 20px;
-          border: 1px solid rgba(255,255,255,0.07);
-          border-radius: 16px;
-          background: #0d0d1a;
-          animation: fadeInScale 0.6s ease both;
-        }
+        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #00ffe5; }
 
         .noise-overlay {
           position: fixed;
@@ -141,12 +80,77 @@ export default function App() {
 
         .scanline {
           position: fixed;
-          left: 0; right: 0;
+          left: 0;
+          right: 0;
           height: 3px;
           background: linear-gradient(transparent, rgba(0,255,200,0.06), transparent);
           pointer-events: none;
           z-index: 9998;
           animation: scanline 8s linear infinite;
+        }
+
+        .site-nav {
+          position: sticky;
+          top: 0;
+          z-index: 100;
+          padding: 0 clamp(16px,5vw,80px);
+          height: 64px;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          background: rgba(7,7,15,0.85);
+          backdrop-filter: blur(20px);
+          border-bottom: 1px solid rgba(255,255,255,0.05);
+          gap: 12px;
+        }
+
+        .site-brand {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          min-width: 0;
+        }
+
+        .site-logo {
+          width: 32px;
+          height: 32px;
+          background: linear-gradient(135deg, var(--accent), var(--accent-2));
+          border-radius: 8px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          letter-spacing: 0.5px;
+          font-weight: 700;
+          color: #05050a;
+          animation: spinSlow 8s linear infinite;
+          box-shadow: 0 0 16px #00ffe577;
+        }
+
+        .site-brand-name {
+          font-family: 'Unbounded', sans-serif;
+          font-weight: 700;
+          font-size: 14px;
+          letter-spacing: 1px;
+          white-space: nowrap;
+        }
+
+        .site-menu-toggle {
+          display: none;
+          background: transparent;
+          border: 1px solid rgba(255,255,255,0.18);
+          border-radius: 8px;
+          color: rgba(255,255,255,0.7);
+          font-family: 'Space Mono', monospace;
+          font-size: 12px;
+          padding: 6px 12px;
+          cursor: pointer;
+        }
+
+        .site-links {
+          display: flex;
+          align-items: center;
+          gap: 24px;
         }
 
         .nav-link {
@@ -163,6 +167,56 @@ export default function App() {
         }
         .nav-link:hover { color: #00ffc8; }
 
+        .hero-title {
+          font-family: 'Unbounded', sans-serif;
+          font-size: clamp(2.2rem, 6vw, 5rem);
+          font-weight: 900;
+          line-height: 1.08;
+          letter-spacing: -1px;
+          animation: slideIn 0.8s ease both;
+        }
+
+        .hero-sub {
+          animation: slideIn 0.8s ease 0.2s both;
+        }
+
+        .cta-btn {
+          background: linear-gradient(135deg, var(--accent), var(--accent-2));
+          color: #07070f;
+          border: none;
+          padding: 14px 30px;
+          font-family: 'Space Mono', monospace;
+          font-weight: 700;
+          font-size: 13px;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.25s;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+          animation: pulseGlow 3s ease-in-out infinite, slideIn 0.8s ease 0.4s both;
+        }
+        .cta-btn:hover { transform: scale(1.05); filter: brightness(1.12); }
+
+        .ghost-btn {
+          background: transparent;
+          color: #fff;
+          border: 1px solid rgba(255,255,255,0.2);
+          padding: 14px 30px;
+          font-family: 'Space Mono', monospace;
+          font-size: 13px;
+          border-radius: 50px;
+          cursor: pointer;
+          transition: all 0.25s;
+          letter-spacing: 0.8px;
+          text-transform: uppercase;
+        }
+        .ghost-btn:hover {
+          border-color: var(--accent);
+          color: var(--accent);
+          background: #00ffe518;
+          box-shadow: 0 0 20px #00ffe522;
+        }
+
         .badge {
           display: inline-block;
           font-family: 'Fira Code', monospace;
@@ -170,7 +224,7 @@ export default function App() {
           padding: 4px 14px;
           border-radius: 20px;
           background: rgba(0,255,229,0.18);
-          color: #00ffe5;
+          color: var(--accent);
           border: 1px solid rgba(0,255,229,0.5);
           letter-spacing: 1px;
           animation: slideIn 0.6s ease both;
@@ -183,12 +237,49 @@ export default function App() {
           letter-spacing: -0.5px;
         }
 
+        .home-main { position: relative; z-index: 2; }
+
+        .home-section {
+          padding: 80px clamp(20px,5vw,80px);
+          max-width: 1200px;
+          margin: 0 auto;
+        }
+
+        .home-hero-grid {
+          padding-top: clamp(50px,8vw,110px);
+          display: grid;
+          grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+          gap: clamp(30px,4vw,56px);
+          align-items: center;
+        }
+
+        .hero-stats {
+          margin-top: 34px;
+          display: grid;
+          gap: 12px;
+          grid-template-columns: repeat(4, minmax(0, 1fr));
+        }
+
+        .stat-card {
+          text-align: center;
+          padding: 22px 12px;
+          border: 1px solid rgba(255,255,255,0.07);
+          border-radius: 16px;
+          background: #0d0d1a;
+          animation: fadeInScale 0.6s ease both;
+        }
+
+        .hero-preview {
+          transform: perspective(1000px) rotateY(-4deg) rotateX(2deg) translate(20px, -22px);
+        }
+
         .code-window {
           background: #0d0d1a;
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 14px;
           overflow: hidden;
           animation: fadeInScale 0.8s ease 0.3s both;
+          box-shadow: 0 24px 80px rgba(0, 0, 0, 0.45);
         }
 
         .code-titlebar {
@@ -215,7 +306,173 @@ export default function App() {
         .token-string { color: #ffee00; text-shadow: 0 0 8px #ffee0066; }
         .token-comment { color: rgba(255,255,255,0.35); font-style: italic; }
         .token-tag { color: #00aaff; text-shadow: 0 0 6px #00aaff66; }
-        .token-attr { color: #7dff00; text-shadow: 0 0 6px #7dff0066; }
+
+        .challenge-toolbar {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 28px;
+          gap: 18px;
+          flex-wrap: wrap;
+        }
+
+        .challenge-controls {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          flex-wrap: wrap;
+        }
+
+        .challenge-search {
+          width: 240px;
+          max-width: 100%;
+          background: #0d0d1a;
+          border: 1px solid rgba(255,255,255,0.08);
+          color: #fff;
+          border-radius: 10px;
+          padding: 10px 12px;
+          font-family: 'Space Mono', monospace;
+          font-size: 12px;
+          outline: none;
+          transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .challenge-search:focus {
+          border-color: #00ffe588;
+          box-shadow: 0 0 0 3px rgba(0,255,229,0.12);
+        }
+
+        .tab-btn {
+          background: transparent;
+          border: none;
+          font-family: 'Space Mono', monospace;
+          font-size: 13px;
+          padding: 10px 20px;
+          border-radius: 30px;
+          cursor: pointer;
+          transition: all 0.25s;
+          letter-spacing: 0.5px;
+        }
+
+        .challenges-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+          gap: 16px;
+        }
+
+        .challenge-card {
+          border-radius: 14px;
+          padding: 22px;
+          cursor: pointer;
+          position: relative;
+          overflow: hidden;
+          text-align: left;
+          width: 100%;
+          color: inherit;
+          font: inherit;
+        }
+
+        .challenge-card:focus-visible {
+          outline: 2px solid #00ffe5;
+          outline-offset: 2px;
+        }
+
+        .challenge-empty {
+          border: 1px dashed rgba(255,255,255,0.2);
+          border-radius: 14px;
+          padding: 30px;
+          text-align: center;
+          color: rgba(255,255,255,0.5);
+          background: rgba(255,255,255,0.01);
+        }
+
+        .hooks-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+          gap: 14px;
+        }
+
+        .hook-card {
+          padding: 18px;
+          background: #0d0d1a;
+          border-radius: 12px;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+        }
+
+        .hook-card:hover {
+          transform: translateY(-4px);
+        }
+
+        .cta-banner {
+          max-width: 800px;
+          margin: 0 auto;
+          text-align: center;
+          padding: clamp(36px,6vw,60px) clamp(20px,5vw,40px);
+          border: 1px solid rgba(0,255,229,0.4);
+          border-radius: 24px;
+          background: linear-gradient(135deg, rgba(0,255,229,0.08), rgba(0,170,255,0.06));
+          position: relative;
+          overflow: hidden;
+          box-shadow: 0 0 60px rgba(0,255,229,0.1);
+        }
+
+        .site-footer {
+          border-top: 1px solid rgba(255,255,255,0.05);
+          padding: 30px clamp(20px,5vw,80px);
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          position: relative;
+          z-index: 2;
+        }
+
+        @media (max-width: 980px) {
+          .site-menu-toggle { display: inline-flex; align-items: center; }
+
+          .site-links {
+            display: none;
+            position: absolute;
+            top: 64px;
+            left: 16px;
+            right: 16px;
+            z-index: 120;
+            background: #090912;
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 14px;
+            padding: 12px;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 8px;
+          }
+
+          .site-links.open { display: flex; }
+          .site-nav .cta-btn { display: none; }
+
+          .home-hero-grid { grid-template-columns: 1fr; }
+          .hero-preview { transform: none; }
+          .hero-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
+
+        @media (max-width: 640px) {
+          .home-section { padding: 64px 20px; }
+          .hero-stats { grid-template-columns: 1fr 1fr; }
+          .cta-btn, .ghost-btn { width: 100%; justify-content: center; }
+          .challenge-toolbar { align-items: stretch; }
+          .challenge-controls { width: 100%; }
+          .challenge-search { width: 100%; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+          *, *::before, *::after {
+            animation-duration: 0.01ms !important;
+            animation-iteration-count: 1 !important;
+            transition-duration: 0.01ms !important;
+            scroll-behavior: auto !important;
+          }
+        }
       `}</style>
 
       <Routes>
@@ -226,31 +483,62 @@ export default function App() {
   );
 }
 
-/* Home page wrapped with the shared nav */
-import { useNavigate } from "react-router-dom";
-
 function HomeWithNav() {
   const navigate = useNavigate();
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const scrollTo = (id) => {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
+    setMenuOpen(false);
+  };
 
   return (
     <>
-      {/* Background layers */}
       <div className="noise-overlay" />
       <div className="grid-bg" />
       <div className="scanline" />
 
-      {/* NAV */}
-      <nav style={{ position: "sticky", top: 0, zIndex: 100, padding: "0 clamp(20px,5vw,80px)", height: "64px", display: "flex", alignItems: "center", justifyContent: "space-between", background: "rgba(7,7,15,0.85)", backdropFilter: "blur(20px)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-          <div style={{ width: "32px", height: "32px", background: "linear-gradient(135deg,#00ffe5,#00aaff)", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "16px", animation: "spinSlow 8s linear infinite", boxShadow: "0 0 16px #00ffe577" }}>⚛</div>
-          <span style={{ fontFamily: "'Unbounded', sans-serif", fontWeight: 700, fontSize: "14px", letterSpacing: "1px" }}>ReactForge</span>
+      <nav className="site-nav">
+        <div className="site-brand">
+          <div className="site-logo">RF</div>
+          <span className="site-brand-name">ReactForge</span>
         </div>
-        <div style={{ display: "flex", gap: "28px" }}>
-          <button className="nav-link" onClick={() => document.getElementById('challenges')?.scrollIntoView({ behavior: 'smooth' })}>Challenges</button>
-          <button className="nav-link" onClick={() => document.getElementById('hooks')?.scrollIntoView({ behavior: 'smooth' })}>HooksGuide</button>
-          <button className="nav-link" onClick={() => navigate('/sandbox')}>Sandbox</button>
+
+        <button
+          type="button"
+          className="site-menu-toggle"
+          onClick={() => setMenuOpen((open) => !open)}
+          aria-expanded={menuOpen}
+          aria-label="Toggle menu"
+        >
+          Menu
+        </button>
+
+        <div className={`site-links ${menuOpen ? "open" : ""}`}>
+          <button className="nav-link" onClick={() => scrollTo("challenges")}>
+            Challenges
+          </button>
+          <button className="nav-link" onClick={() => scrollTo("hooks")}>
+            Hooks Guide
+          </button>
+          <button
+            className="nav-link"
+            onClick={() => {
+              setMenuOpen(false);
+              navigate("/sandbox");
+            }}
+          >
+            Sandbox
+          </button>
         </div>
-        <button className="cta-btn" style={{ padding: "8px 22px", fontSize: "12px", animation: "none" }} onClick={() => navigate('/sandbox')}>Start Coding →</button>
+
+        <button
+          className="cta-btn"
+          style={{ padding: "8px 22px", fontSize: "12px", animation: "none" }}
+          onClick={() => navigate("/sandbox")}
+        >
+          Start Coding
+        </button>
       </nav>
 
       <Home />
