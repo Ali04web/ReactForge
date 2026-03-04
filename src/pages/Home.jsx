@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+﻿import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const FLOATING_SNIPPETS = [
@@ -31,6 +31,7 @@ const CHALLENGES = [
     badge: "01",
     desc: "Build increment, decrement, reset, and step actions.",
     tag: "useState",
+    challengeKey: "counter",
     template: "counter",
   },
   {
@@ -40,6 +41,7 @@ const CHALLENGES = [
     badge: "02",
     desc: "Practice CRUD operations and list rendering patterns.",
     tag: "useState + map",
+    challengeKey: "todo",
     template: "todo",
   },
   {
@@ -49,6 +51,7 @@ const CHALLENGES = [
     badge: "03",
     desc: "Load users from an API and handle loading and error states.",
     tag: "useEffect",
+    challengeKey: "fetch",
     template: "fetch",
   },
   {
@@ -58,6 +61,7 @@ const CHALLENGES = [
     badge: "04",
     desc: "Create a context-based theme switcher with persistence.",
     tag: "useContext",
+    challengeKey: "theme-toggle",
     template: "blank",
   },
   {
@@ -67,6 +71,7 @@ const CHALLENGES = [
     badge: "05",
     desc: "Throttle expensive lookups and reduce unnecessary renders.",
     tag: "useMemo + useCallback",
+    challengeKey: "debounced-search",
     template: "blank",
   },
   {
@@ -76,6 +81,7 @@ const CHALLENGES = [
     badge: "06",
     desc: "Use IntersectionObserver for progressive list loading.",
     tag: "useRef + useEffect",
+    challengeKey: "infinite-scroll",
     template: "blank",
   },
 ];
@@ -140,7 +146,7 @@ function ChallengeCard({ challenge, index, onLaunch }) {
       className="challenge-card"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      onClick={() => onLaunch(challenge.template)}
+      onClick={() => onLaunch(challenge.challengeKey)}
       style={{
         border: `1px solid ${hovered ? color : "rgba(255,255,255,0.08)"}`,
         boxShadow: hovered
@@ -230,6 +236,10 @@ export default function Home() {
 
   const openTemplate = (template = "blank") => {
     navigate(`/sandbox?template=${template}`);
+  };
+
+  const openChallenge = (challengeKey) => {
+    navigate(`/sandbox?challenge=${challengeKey}`);
   };
 
   return (
@@ -468,7 +478,7 @@ export default function Home() {
                   key={challenge.id}
                   challenge={challenge}
                   index={index}
-                  onLaunch={openTemplate}
+                  onLaunch={openChallenge}
                 />
               ))}
             </div>
@@ -541,7 +551,7 @@ export default function Home() {
               Open a template, complete the challenge comments, and iterate in live preview until your answer is solid.
             </p>
             <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-              <button className="cta-btn" onClick={() => openTemplate("counter")}>
+              <button className="cta-btn" onClick={() => openChallenge("counter")}>
                 Start with Counter
               </button>
               <button

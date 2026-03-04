@@ -1,88 +1,64 @@
-import { useEffect, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import {
   SandpackProvider,
   SandpackLayout,
   SandpackCodeEditor,
   SandpackPreview,
-  SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
 import "./Sandbox.css";
 
-const TEMPLATES = {
-  blank: {
-    label: "Blank Project",
-    desc: "Empty React starter.",
-    files: {
-      "/App.js": `import { useState } from 'react'
-import './styles.css'
+const DEFAULT_TEMPLATE_KEY = "blank";
+const TEMPLATE_STORAGE_KEY = "reactforge_active_template";
 
-export default function App() {
-  return (
-    <div className="app">
-      <h1>Hello ReactForge!</h1>
-      <p>Start coding here...</p>
-    </div>
-  )
-}
-`,
-      "/styles.css": `* {
+const BASE_STYLE_FILE = `* {
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-  background: #0f0f1a;
-  color: #e0e0e0;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: #090b10;
+  color: #f2f7ff;
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .app {
-  text-align: center;
-  padding: 2rem;
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
+`;
 
+const TEMPLATE_LIBRARY = {
+  blank: {
+    label: "Blank Project",
+    desc: "Empty React starter with live preview.",
+    files: {
+      "/App.js": `import './styles.css'
+
+export default function App() {
+  return (
+    <main className="app">
+      <h1>Start building</h1>
+    </main>
+  )
+}
+`,
+      "/styles.css": `${BASE_STYLE_FILE}
 h1 {
   font-size: 2rem;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(90deg, #00ffe5, #00aaff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-p {
-  color: #888;
-  font-size: 1.1rem;
-}
-
-button {
-  margin: 0.5rem;
-  padding: 0.6rem 1.5rem;
-  border: 1px solid #00ffe5;
-  background: transparent;
-  color: #00ffe5;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-
-button:hover {
-  background: #00ffe5;
-  color: #0f0f1a;
-  box-shadow: 0 0 20px #00ffe555;
+  font-weight: 600;
+  color: #8fd6ff;
 }
 `,
     },
   },
   counter: {
     label: "Counter App",
-    desc: "useState basics with increment, decrement and reset.",
+    desc: "useState basics with increment, decrement, and reset.",
     files: {
       "/App.js": `import { useState } from 'react'
 import './styles.css'
@@ -91,75 +67,43 @@ export default function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="app">
-      <h1>Counter App</h1>
-      <div className="counter-display">{count}</div>
-      <div className="button-group">
-        <button onClick={() => setCount(c => c - 1)}>- Decrement</button>
-        <button className="reset" onClick={() => setCount(0)}>Reset</button>
-        <button onClick={() => setCount(c => c + 1)}>+ Increment</button>
-      </div>
-      {/*
-        Challenge:
-        1. Add a "double" button that doubles the count
-        2. Change counter color for positive/negative values
-        3. Add a step size input
-      */}
-    </div>
+    <main className="app">
+      <section className="panel">
+        <h1>Counter App</h1>
+        <p className="count">{count}</p>
+        <div className="actions">
+          <button onClick={() => setCount(c => c - 1)}>-1</button>
+          <button onClick={() => setCount(0)}>Reset</button>
+          <button onClick={() => setCount(c => c + 1)}>+1</button>
+        </div>
+      </section>
+    </main>
   )
 }
 `,
-      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
+      "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  background: #121623;
+  border: 1px solid #24314a;
+  border-radius: 12px;
+  padding: 24px;
+  width: min(420px, 100%);
+  text-align: center;
+}
 
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0f0f1a;
-  color: #e0e0e0;
-  min-height: 100vh;
+h1 { margin-bottom: 12px; }
+.count {
+  font-size: 3rem;
+  margin-bottom: 14px;
+}
+.actions {
   display: flex;
-  align-items: center;
+  gap: 8px;
   justify-content: center;
 }
-
-.app { text-align: center; padding: 2rem; }
-
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  background: linear-gradient(90deg, #00ffe5, #00aaff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.counter-display {
-  font-size: 5rem;
-  font-weight: 700;
-  margin: 1rem 0;
-  color: #00ffe5;
-  text-shadow: 0 0 30px #00ffe555;
-}
-
-.button-group { display: flex; gap: 0.75rem; justify-content: center; flex-wrap: wrap; }
-
 button {
-  padding: 0.6rem 1.5rem;
-  border: 1px solid #00ffe5;
-  background: transparent;
-  color: #00ffe5;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  transition: all 0.2s;
+  padding: 8px 12px;
 }
-
-button:hover {
-  background: #00ffe5;
-  color: #0f0f1a;
-  box-shadow: 0 0 20px #00ffe555;
-}
-
-button.reset { border-color: #f000ff; color: #f000ff; }
-button.reset:hover { background: #f000ff; color: #0f0f1a; box-shadow: 0 0 20px #f000ff55; }
 `,
     },
   },
@@ -171,347 +115,516 @@ button.reset:hover { background: #f000ff; color: #0f0f1a; box-shadow: 0 0 20px #
 import './styles.css'
 
 export default function App() {
+  const [text, setText] = useState('')
   const [todos, setTodos] = useState([
-    { id: 1, text: 'Learn useState', done: true },
-    { id: 2, text: 'Build a todo app', done: false },
-    { id: 3, text: 'Ace the interview', done: false },
+    { id: 1, text: 'Learn useState', done: false },
+    { id: 2, text: 'Build todo app', done: true },
   ])
-  const [input, setInput] = useState('')
 
   const addTodo = () => {
-    if (!input.trim()) return
-    setTodos([...todos, { id: Date.now(), text: input, done: false }])
-    setInput('')
-  }
-
-  const toggleTodo = (id) => {
-    setTodos(todos.map(t => t.id === id ? { ...t, done: !t.done } : t))
-  }
-
-  const deleteTodo = (id) => {
-    setTodos(todos.filter(t => t.id !== id))
+    if (!text.trim()) return
+    setTodos((prev) => [...prev, { id: Date.now(), text, done: false }])
+    setText('')
   }
 
   return (
-    <div className="app">
-      <h1>Todo List</h1>
-      <div className="input-row">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          onKeyDown={e => e.key === 'Enter' && addTodo()}
-          placeholder="Add a new task..."
-        />
-        <button onClick={addTodo}>Add</button>
-      </div>
-      <ul className="todo-list">
-        {todos.map(todo => (
-          <li key={todo.id} className={todo.done ? 'done' : ''}>
-            <span onClick={() => toggleTodo(todo.id)}>{todo.text}</span>
-            <button className="delete" onClick={() => deleteTodo(todo.id)}>x</button>
-          </li>
-        ))}
-      </ul>
-      <p className="count">{todos.filter(t => !t.done).length} remaining</p>
-      {/*
-        Challenge:
-        1. Add edit functionality
-        2. Add a "clear completed" button
-        3. Save todos to localStorage
-      */}
-    </div>
+    <main className="app">
+      <section className="panel">
+        <h1>Todo List</h1>
+        <div className="row">
+          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="New task" />
+          <button onClick={addTodo}>Add</button>
+        </div>
+        <ul>
+          {todos.map((todo) => (
+            <li key={todo.id} className={todo.done ? 'done' : ''}>
+              <span onClick={() => setTodos((prev) => prev.map((t) => t.id === todo.id ? { ...t, done: !t.done } : t))}>
+                {todo.text}
+              </span>
+              <button onClick={() => setTodos((prev) => prev.filter((t) => t.id !== todo.id))}>x</button>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </main>
   )
 }
 `,
-      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0f0f1a;
-  color: #e0e0e0;
-  min-height: 100vh;
+      "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  background: #121623;
+  border: 1px solid #24314a;
+  border-radius: 12px;
+  padding: 24px;
+  width: min(520px, 100%);
+}
+.row {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 8px;
+  margin: 12px 0;
 }
-
-.app { padding: 2rem; max-width: 500px; width: 100%; }
-
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.input-row {
-  display: flex;
-  gap: 0.5rem;
-  margin-bottom: 1.5rem;
-}
-
 input {
   flex: 1;
-  padding: 0.7rem 1rem;
-  border: 1px solid #333;
-  background: #1a1a2e;
-  color: #fff;
-  border-radius: 8px;
-  font-size: 1rem;
-  outline: none;
-  transition: border-color 0.2s;
+  padding: 8px;
 }
-
-input:focus { border-color: #00ffe5; }
-
-button {
-  padding: 0.7rem 1.5rem;
-  border: 1px solid #00ffe5;
-  background: #00ffe5;
-  color: #0f0f1a;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  transition: all 0.2s;
+ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
 }
-
-button:hover { box-shadow: 0 0 20px #00ffe555; }
-
-.todo-list { list-style: none; }
-
-.todo-list li {
+li {
   display: flex;
-  align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1rem;
-  border: 1px solid #222;
-  border-radius: 8px;
-  margin-bottom: 0.5rem;
-  cursor: pointer;
-  transition: all 0.2s;
+  background: #0f1320;
+  border: 1px solid #202b43;
+  padding: 8px;
 }
-
-.todo-list li:hover { border-color: #00ffe555; }
-.todo-list li.done span { text-decoration: line-through; color: #555; }
-
-.delete {
-  background: transparent;
-  border: 1px solid #ff3d5e;
-  color: #ff3d5e;
-  padding: 0.3rem 0.6rem;
-  font-size: 0.8rem;
-}
-
-.delete:hover { background: #ff3d5e; color: #fff; }
-
-.count {
-  text-align: center;
-  margin-top: 1rem;
-  color: #666;
-  font-size: 0.9rem;
+.done span {
+  text-decoration: line-through;
+  opacity: 0.6;
 }
 `,
     },
   },
   fetch: {
     label: "Fetch and Display",
-    desc: "useEffect with API calls and async flow.",
+    desc: "useEffect with API calls and loading states.",
     files: {
-      "/App.js": `import { useState, useEffect } from 'react'
+      "/App.js": `import { useEffect, useState } from 'react'
 import './styles.css'
 
 export default function App() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(true)
-  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        const res = await fetch('https://jsonplaceholder.typicode.com/users')
-        if (!res.ok) throw new Error('Failed to fetch')
-        const data = await res.json()
-        setUsers(data)
-      } catch (err) {
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+    const run = async () => {
+      const response = await fetch('https://jsonplaceholder.typicode.com/users')
+      const data = await response.json()
+      setUsers(data)
+      setLoading(false)
     }
-    fetchUsers()
+
+    run()
   }, [])
 
-  if (loading) return <div className="app"><div className="loader">Loading...</div></div>
-  if (error) return <div className="app"><p className="error">Error: {error}</p></div>
-
   return (
-    <div className="app">
-      <h1>User Directory</h1>
-      <div className="grid">
-        {users.map(user => (
-          <div key={user.id} className="card">
-            <div className="avatar">{user.name[0]}</div>
-            <h3>{user.name}</h3>
-            <p className="email">{user.email}</p>
-            <p className="company">{user.company.name}</p>
+    <main className="app">
+      <section className="panel">
+        <h1>User Directory</h1>
+        {loading ? <p>Loading...</p> : (
+          <div className="grid">
+            {users.map((user) => (
+              <article key={user.id}>
+                <h3>{user.name}</h3>
+                <p>{user.email}</p>
+              </article>
+            ))}
           </div>
-        ))}
-      </div>
-      {/*
-        Challenge:
-        1. Add a search/filter by name
-        2. Add a loading skeleton instead of text
-        3. Click a card to show full user details
-      */}
-    </div>
+        )}
+      </section>
+    </main>
   )
 }
 `,
-      "/styles.css": `* { margin: 0; padding: 0; box-sizing: border-box; }
-
-body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0f0f1a;
-  color: #e0e0e0;
-  min-height: 100vh;
-  padding: 2rem;
+      "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  width: min(900px, 100%);
 }
-
-.app { max-width: 900px; margin: 0 auto; }
-
-h1 {
-  font-size: 1.8rem;
-  margin-bottom: 1.5rem;
-  text-align: center;
-}
-
-.loader {
-  text-align: center;
-  color: #00ffe5;
-  font-size: 1.2rem;
-  margin-top: 4rem;
-  animation: pulse 1s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.error { color: #ff3d5e; text-align: center; margin-top: 4rem; }
-
 .grid {
+  margin-top: 12px;
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 10px;
 }
-
-.card {
-  background: #1a1a2e;
-  border: 1px solid #222;
-  border-radius: 12px;
-  padding: 1.5rem;
-  text-align: center;
-  transition: all 0.2s;
+article {
+  border: 1px solid #23324d;
+  background: #111726;
+  border-radius: 10px;
+  padding: 12px;
 }
-
-.card:hover {
-  border-color: #00ffe5;
-  transform: translateY(-4px);
-  box-shadow: 0 8px 30px #00ffe522;
-}
-
-.avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #00ffe5, #00aaff);
-  color: #0f0f1a;
-  font-size: 1.4rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 1rem;
-}
-
-.card h3 { font-size: 1rem; margin-bottom: 0.3rem; }
-.email { color: #00ffe5; font-size: 0.85rem; margin-bottom: 0.3rem; }
-.company { color: #666; font-size: 0.8rem; }
 `,
     },
   },
 };
 
-const DEFAULT_TEMPLATE_KEY = "blank";
-const TEMPLATE_STORAGE_KEY = "reactforge_active_template";
+const CHALLENGE_LIBRARY = {
+  counter: {
+    title: "Counter App",
+    hint: "Use useState for count and provide increment, decrement, and reset buttons.",
+    solutionFiles: TEMPLATE_LIBRARY.counter.files,
+  },
+  todo: {
+    title: "Todo List",
+    hint: "Track input state and a todo array, then add/toggle/delete tasks.",
+    solutionFiles: TEMPLATE_LIBRARY.todo.files,
+  },
+  fetch: {
+    title: "Fetch and Display",
+    hint: "Use useEffect to fetch data once and render loading and success states.",
+    solutionFiles: TEMPLATE_LIBRARY.fetch.files,
+  },
+  "theme-toggle": {
+    title: "Theme Toggle",
+    hint: "Store theme in state and apply a className on the root container.",
+    solutionFiles: {
+      "/App.js": `import { useEffect, useState } from 'react'
+import './styles.css'
+
+export default function App() {
+  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
+
+  useEffect(() => {
+    localStorage.setItem('theme', theme)
+  }, [theme])
+
+  return (
+    <main className={`app ${theme}`}>
+      <section className="panel">
+        <h1>Theme Toggle</h1>
+        <p>Current theme: {theme}</p>
+        <button onClick={() => setTheme((prev) => prev === 'dark' ? 'light' : 'dark')}>
+          Toggle Theme
+        </button>
+      </section>
+    </main>
+  )
+}
+`,
+      "/styles.css": `${BASE_STYLE_FILE}
+.app.dark { background: #0a0c12; color: #f2f7ff; }
+.app.light { background: #eef3fb; color: #0a1224; }
+.panel {
+  background: rgba(18, 23, 36, 0.9);
+  border: 1px solid #22314a;
+  border-radius: 12px;
+  padding: 24px;
+}
+.app.light .panel {
+  background: #ffffff;
+  border-color: #c8d6ef;
+}
+`,
+    },
+  },
+  "debounced-search": {
+    title: "Debounced Search",
+    hint: "Keep one state for raw input and another for debounced value with setTimeout.",
+    solutionFiles: {
+      "/App.js": `import { useEffect, useMemo, useState } from 'react'
+import './styles.css'
+
+const DATA = ['React', 'Redux', 'Router', 'Render', 'Ref', 'Reducer', 'Request', 'Result']
+
+export default function App() {
+  const [query, setQuery] = useState('')
+  const [debouncedQuery, setDebouncedQuery] = useState('')
+
+  useEffect(() => {
+    const id = setTimeout(() => setDebouncedQuery(query), 450)
+    return () => clearTimeout(id)
+  }, [query])
+
+  const results = useMemo(() => {
+    const value = debouncedQuery.trim().toLowerCase()
+    if (!value) return DATA
+    return DATA.filter((item) => item.toLowerCase().includes(value))
+  }, [debouncedQuery])
+
+  return (
+    <main className="app">
+      <section className="panel">
+        <h1>Debounced Search</h1>
+        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search topics" />
+        <p>Searching for: {debouncedQuery || 'all'}</p>
+        <ul>
+          {results.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+      </section>
+    </main>
+  )
+}
+`,
+      "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  width: min(500px, 100%);
+  border: 1px solid #22314a;
+  background: #111726;
+  border-radius: 12px;
+  padding: 24px;
+}
+input {
+  width: 100%;
+  margin: 12px 0;
+  padding: 8px;
+}
+ul {
+  margin-top: 12px;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+li {
+  background: #0d121f;
+  border: 1px solid #1f2a42;
+  border-radius: 8px;
+  padding: 8px;
+}
+`,
+    },
+  },
+  "infinite-scroll": {
+    title: "Infinite Scroll",
+    hint: "Use IntersectionObserver on a sentinel element to append more items when visible.",
+    solutionFiles: {
+      "/App.js": `import { useEffect, useRef, useState } from 'react'
+import './styles.css'
+
+const createItems = (start, count) => Array.from({ length: count }, (_, i) => `Item ${start + i}`)
+
+export default function App() {
+  const [items, setItems] = useState(() => createItems(1, 20))
+  const [page, setPage] = useState(1)
+  const sentinelRef = useRef(null)
+
+  useEffect(() => {
+    const node = sentinelRef.current
+    if (!node) return
+
+    const observer = new IntersectionObserver((entries) => {
+      if (entries[0].isIntersecting) {
+        setPage((prev) => prev + 1)
+      }
+    }, { threshold: 1 })
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (page === 1) return
+    setItems((prev) => [...prev, ...createItems(prev.length + 1, 10)])
+  }, [page])
+
+  return (
+    <main className="app">
+      <section className="panel">
+        <h1>Infinite Scroll</h1>
+        <ul>
+          {items.map((item) => <li key={item}>{item}</li>)}
+        </ul>
+        <div ref={sentinelRef} className="sentinel">Load more...</div>
+      </section>
+    </main>
+  )
+}
+`,
+      "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  width: min(500px, 100%);
+  border: 1px solid #22314a;
+  background: #111726;
+  border-radius: 12px;
+  padding: 24px;
+}
+ul {
+  list-style: none;
+  display: grid;
+  gap: 8px;
+  max-height: 420px;
+  overflow: auto;
+  margin-top: 12px;
+}
+li {
+  background: #0d121f;
+  border: 1px solid #1f2a42;
+  border-radius: 8px;
+  padding: 8px;
+}
+.sentinel {
+  text-align: center;
+  padding: 12px;
+  color: #9db6d6;
+}
+`,
+    },
+  },
+};
+
+const SANDBOX_DEPENDENCIES = [
+  { name: "react", version: "^19.0.0" },
+  { name: "react-dom", version: "^19.0.0" },
+  { name: "react-router-dom", version: "^7.0.0" },
+  { name: "@codesandbox/sandpack-react", version: "^2.0.0" },
+];
 
 const REACTFORGE_THEME = {
   colors: {
-    surface1: "#0d0d1a",
-    surface2: "#161626",
-    surface3: "#1e1e32",
-    clickable: "#999",
-    base: "#c0c0c0",
-    disabled: "#444",
-    hover: "#00ffe5",
-    accent: "#00ffe5",
-    error: "#ff3d5e",
-    errorSurface: "#1a0008",
+    surface1: "#06080f",
+    surface2: "#0d121d",
+    surface3: "#141b29",
+    clickable: "#95a8c9",
+    base: "#dce7fb",
+    disabled: "#3b4b69",
+    hover: "#8fd6ff",
+    accent: "#8fd6ff",
+    error: "#ff5d7d",
+    errorSurface: "#2a0f18",
   },
   syntax: {
-    plain: "#d4d4d4",
-    comment: { color: "#6a6a8a", fontStyle: "italic" },
-    keyword: "#f000ff",
-    tag: "#00aaff",
-    punctuation: "#888",
-    definition: "#00ffe5",
-    property: "#7dff00",
-    static: "#ffee00",
-    string: "#ffee00",
+    plain: "#dce7fb",
+    comment: { color: "#6c7f9e", fontStyle: "italic" },
+    keyword: "#8fd6ff",
+    tag: "#7cf4bd",
+    punctuation: "#9fb2cf",
+    definition: "#c4a8ff",
+    property: "#f6d58c",
+    static: "#f6d58c",
+    string: "#7cf4bd",
   },
   font: {
     body: "'Space Mono', 'Fira Code', monospace",
     mono: "'Fira Code', 'Cascadia Code', monospace",
     size: "13px",
-    lineHeight: "1.6",
+    lineHeight: "1.65",
   },
 };
 
-const isValidTemplate = (key) => Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATES, key));
+const isValidTemplate = (key) => Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATE_LIBRARY, key));
+const isValidChallenge = (key) => Boolean(key && Object.prototype.hasOwnProperty.call(CHALLENGE_LIBRARY, key));
+
+const makeChallengeStarterFiles = (title) => ({
+  "/App.js": `import './styles.css'
+
+export default function App() {
+  return (
+    <main className="app">
+      <section className="panel">
+        <h1>${title}</h1>
+        <p>Start with a blank canvas. Use the hint bar above to guide your implementation.</p>
+      </section>
+    </main>
+  )
+}
+`,
+  "/styles.css": `${BASE_STYLE_FILE}
+.panel {
+  width: min(680px, 100%);
+  border: 1px dashed #3b4f71;
+  border-radius: 12px;
+  background: #0d121e;
+  padding: 26px;
+  text-align: left;
+}
+h1 {
+  margin-bottom: 10px;
+}
+p {
+  color: #a4b5d3;
+  line-height: 1.6;
+}
+`,
+});
+
+function ExplorerSection({ title, isOpen, onToggle, children }) {
+  return (
+    <section className="ide-section">
+      <button type="button" className="ide-section-toggle" onClick={onToggle}>
+        <span className="ide-arrow">{isOpen ? "v" : ">"}</span>
+        <span>{title}</span>
+      </button>
+      {isOpen ? <div className="ide-section-body">{children}</div> : null}
+    </section>
+  );
+}
 
 export default function Sandbox() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+
   const templateFromUrl = searchParams.get("template");
-  const [activeTemplate, setActiveTemplate] = useState(() => {
-    if (isValidTemplate(templateFromUrl)) return templateFromUrl;
+  const challengeFromUrl = searchParams.get("challenge");
+
+  const [sandboxState, setSandboxState] = useState(() => {
+    if (isValidChallenge(challengeFromUrl)) {
+      return { mode: "challenge", key: challengeFromUrl };
+    }
+
+    if (isValidTemplate(templateFromUrl)) {
+      return { mode: "template", key: templateFromUrl };
+    }
 
     const fromStorage = localStorage.getItem(TEMPLATE_STORAGE_KEY);
-    if (isValidTemplate(fromStorage)) return fromStorage;
-
-    return DEFAULT_TEMPLATE_KEY;
-  });
-  const [shareCopied, setShareCopied] = useState(false);
-
-  useEffect(() => {
-    if (!isValidTemplate(templateFromUrl)) {
-      setSearchParams({ template: activeTemplate }, { replace: true });
+    if (isValidTemplate(fromStorage)) {
+      return { mode: "template", key: fromStorage };
     }
-  }, [activeTemplate, setSearchParams, templateFromUrl]);
+
+    return { mode: "template", key: DEFAULT_TEMPLATE_KEY };
+  });
+
+  const [shareCopied, setShareCopied] = useState(false);
+  const [dependencyQuery, setDependencyQuery] = useState("");
+  const [allSolutionsUnlocked, setAllSolutionsUnlocked] = useState(false);
+  const [sections, setSections] = useState({
+    sandboxInfo: true,
+    nodebox: true,
+    dependencies: false,
+    outline: false,
+  });
+
+  const isChallengeMode = sandboxState.mode === "challenge";
+  const activeTemplate = isChallengeMode ? DEFAULT_TEMPLATE_KEY : sandboxState.key;
+  const activeChallenge = isChallengeMode ? CHALLENGE_LIBRARY[sandboxState.key] : null;
+  const activeTemplateData = TEMPLATE_LIBRARY[activeTemplate];
+
+  const editorFiles = useMemo(() => {
+    if (isChallengeMode && activeChallenge) {
+      if (allSolutionsUnlocked) return activeChallenge.solutionFiles;
+      return makeChallengeStarterFiles(activeChallenge.title);
+    }
+
+    return activeTemplateData.files;
+  }, [activeChallenge, activeTemplateData.files, allSolutionsUnlocked, isChallengeMode]);
+
+  const activeLabel = isChallengeMode ? activeChallenge.title : activeTemplateData.label;
 
   useEffect(() => {
-    localStorage.setItem(TEMPLATE_STORAGE_KEY, activeTemplate);
-  }, [activeTemplate]);
+    if (isChallengeMode) {
+      if (searchParams.get("challenge") !== sandboxState.key || searchParams.get("template")) {
+        setSearchParams({ challenge: sandboxState.key }, { replace: true });
+      }
+      return;
+    }
 
-  const switchTemplate = (nextTemplate) => {
-    if (!isValidTemplate(nextTemplate) || nextTemplate === activeTemplate) return;
-    setActiveTemplate(nextTemplate);
-    setSearchParams({ template: nextTemplate }, { replace: true });
+    if (searchParams.get("template") !== sandboxState.key || searchParams.get("challenge")) {
+      setSearchParams({ template: sandboxState.key }, { replace: true });
+    }
+  }, [isChallengeMode, sandboxState.key, searchParams, setSearchParams]);
+
+  useEffect(() => {
+    if (!isChallengeMode) {
+      localStorage.setItem(TEMPLATE_STORAGE_KEY, sandboxState.key);
+    }
+  }, [isChallengeMode, sandboxState.key]);
+
+  const setSectionOpen = (sectionName) => {
+    setSections((prev) => ({ ...prev, [sectionName]: !prev[sectionName] }));
+  };
+
+  const openTemplate = (templateKey) => {
+    if (!isValidTemplate(templateKey)) return;
+    setSandboxState({ mode: "template", key: templateKey });
+  };
+
+  const openChallenge = (challengeKey) => {
+    if (!isValidChallenge(challengeKey)) return;
+    setSandboxState({ mode: "challenge", key: challengeKey });
   };
 
   const copyShareUrl = async () => {
-    const shareUrl = `${window.location.origin}/sandbox?template=${activeTemplate}`;
+    const query = isChallengeMode ? `challenge=${sandboxState.key}` : `template=${sandboxState.key}`;
+    const shareUrl = `${window.location.origin}/sandbox?${query}`;
+
     try {
       await navigator.clipboard.writeText(shareUrl);
       setShareCopied(true);
@@ -521,7 +634,11 @@ export default function Sandbox() {
     }
   };
 
-  const template = TEMPLATES[activeTemplate];
+  const filteredDependencies = SANDBOX_DEPENDENCIES.filter((dep) =>
+    dep.name.toLowerCase().includes(dependencyQuery.trim().toLowerCase())
+  );
+
+  const visibleFiles = Object.keys(editorFiles).map((file) => file.replace("/", ""));
 
   return (
     <div className="sandbox-page">
@@ -530,83 +647,177 @@ export default function Sandbox() {
 
       <header className="sandbox-header">
         <div className="sandbox-header-left">
-          <button className="sandbox-back-btn" onClick={() => navigate("/")}>
-            Home
-          </button>
+          <button className="sandbox-back-btn" onClick={() => navigate("/")}>Home</button>
           <div className="sandbox-logo">
             <div className="sandbox-logo-icon">RF</div>
-            <span>ReactForge</span>
-            <span className="sandbox-badge">Sandbox</span>
+            <span>{isChallengeMode ? "Challenge" : "Sandbox"}</span>
           </div>
         </div>
 
         <div className="sandbox-header-right">
+          <span className="sandbox-active-label">{activeLabel}</span>
           <button className="sandbox-share-btn" onClick={copyShareUrl}>
             {shareCopied ? "Copied" : "Copy Link"}
           </button>
-
-          <div className="sandbox-template-selector">
-            {Object.entries(TEMPLATES).map(([key, item]) => (
-              <button
-                key={key}
-                className={`sandbox-template-btn ${activeTemplate === key ? "active" : ""}`}
-                onClick={() => switchTemplate(key)}
-                title={item.desc}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
         </div>
       </header>
 
-      <div className="sandbox-info-bar">
-        <span className="sandbox-info-icon">Info</span>
-        <span className="sandbox-info-text">
-          <strong>{template.label}</strong> - {template.desc} Edit on the left and view output on the right.
-        </span>
-      </div>
+      <div className="sandbox-workbench">
+        <aside className="ide-sidebar">
+          <div className="ide-rail">
+            <button className="ide-rail-btn active" type="button">EX</button>
+            <button className="ide-rail-btn" type="button">SR</button>
+            <button className="ide-rail-btn" type="button">GL</button>
+            <button className="ide-rail-btn" type="button">GH</button>
+          </div>
 
-      <div className="sandbox-editor-wrapper">
-        <SandpackProvider
-          key={activeTemplate}
-          template="react"
-          theme={REACTFORGE_THEME}
-          files={template.files}
-          options={{
-            activeFile: "/App.js",
-            visibleFiles: ["/App.js", "/styles.css"],
-            externalResources: [
-              "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
-            ],
-          }}
-        >
-          <SandpackLayout className="sandbox-layout">
-            <SandpackFileExplorer style={{ height: "100%" }} />
-            <SandpackCodeEditor
-              style={{ height: "100%" }}
-              showLineNumbers
-              showTabs
-              closableTabs
-              wrapContent
-            />
-            <SandpackPreview style={{ height: "100%" }} showNavigator showRefreshButton />
-          </SandpackLayout>
-        </SandpackProvider>
+          <div className="ide-explorer">
+            <div className="ide-explorer-header">
+              <span>EXPLORER</span>
+              <span>...</span>
+            </div>
+
+            <ExplorerSection
+              title="SANDBOX INFO"
+              isOpen={sections.sandboxInfo}
+              onToggle={() => setSectionOpen("sandboxInfo")}
+            >
+              <p className="info-line">Mode: {isChallengeMode ? "Challenge" : "Template"}</p>
+              <p className="info-line">Active: {activeLabel}</p>
+              <div className="mode-actions">
+                <button
+                  type="button"
+                  className={`mode-btn ${!isChallengeMode && activeTemplate === "blank" ? "active" : ""}`}
+                  onClick={() => openTemplate("blank")}
+                >
+                  Blank Sandbox
+                </button>
+                <button
+                  type="button"
+                  className={`mode-btn ${isChallengeMode && sandboxState.key === "counter" ? "active" : ""}`}
+                  onClick={() => openChallenge("counter")}
+                >
+                  Counter Challenge
+                </button>
+                <button
+                  type="button"
+                  className={`mode-btn ${isChallengeMode && sandboxState.key === "todo" ? "active" : ""}`}
+                  onClick={() => openChallenge("todo")}
+                >
+                  Todo Challenge
+                </button>
+                <button
+                  type="button"
+                  className={`mode-btn ${isChallengeMode && sandboxState.key === "fetch" ? "active" : ""}`}
+                  onClick={() => openChallenge("fetch")}
+                >
+                  Fetch Challenge
+                </button>
+              </div>
+            </ExplorerSection>
+
+            <ExplorerSection
+              title="NODEBOX"
+              isOpen={sections.nodebox}
+              onToggle={() => setSectionOpen("nodebox")}
+            >
+              <div className="file-node folder">public</div>
+              {visibleFiles.map((file) => (
+                <div key={file} className="file-node file">{file}</div>
+              ))}
+              <div className="file-node file">package.json</div>
+            </ExplorerSection>
+
+            <ExplorerSection
+              title="DEPENDENCIES"
+              isOpen={sections.dependencies}
+              onToggle={() => setSectionOpen("dependencies")}
+            >
+              <input
+                className="dependency-search"
+                placeholder="Search..."
+                value={dependencyQuery}
+                onChange={(event) => setDependencyQuery(event.target.value)}
+              />
+              <div className="dependency-list">
+                {filteredDependencies.map((dep) => (
+                  <div key={dep.name} className="dependency-item">
+                    <span>{dep.name}</span>
+                    <span className="dependency-version">{dep.version}</span>
+                  </div>
+                ))}
+              </div>
+            </ExplorerSection>
+
+            <ExplorerSection
+              title="OUTLINE"
+              isOpen={sections.outline}
+              onToggle={() => setSectionOpen("outline")}
+            >
+              <div className="file-node file">root</div>
+            </ExplorerSection>
+          </div>
+        </aside>
+
+        <div className="ide-main">
+          {isChallengeMode && activeChallenge ? (
+            <div className="challenge-hint-bar">
+              <div>
+                <span className="hint-chip">Hint</span>
+                <p>{activeChallenge.hint}</p>
+              </div>
+              <button
+                type="button"
+                className="unlock-btn"
+                onClick={() => setAllSolutionsUnlocked(true)}
+                disabled={allSolutionsUnlocked}
+              >
+                {allSolutionsUnlocked ? "All Solutions Unlocked" : "Unlock All Challenge Answers"}
+              </button>
+            </div>
+          ) : null}
+
+          <div className="sandbox-editor-wrapper">
+            <SandpackProvider
+              key={`${sandboxState.mode}-${sandboxState.key}-${allSolutionsUnlocked ? "unlocked" : "locked"}`}
+              template="react"
+              theme={REACTFORGE_THEME}
+              files={editorFiles}
+              options={{
+                activeFile: "/App.js",
+                visibleFiles: ["/App.js", "/styles.css"],
+                externalResources: [
+                  "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
+                ],
+              }}
+            >
+              <SandpackLayout className="sandbox-layout">
+                <SandpackCodeEditor
+                  className="sandbox-code-editor"
+                  style={{ height: "100%" }}
+                  showLineNumbers
+                  showTabs
+                  closableTabs
+                  wrapContent
+                />
+                <SandpackPreview
+                  className="sandbox-live-preview"
+                  style={{ height: "100%" }}
+                  showNavigator
+                  showRefreshButton
+                />
+              </SandpackLayout>
+            </SandpackProvider>
+          </div>
+        </div>
       </div>
 
       <div className="sandbox-footer-tips">
-        <div className="sandbox-tip">
-          <span className="tip-key">Ctrl+S</span> Save
-        </div>
-        <div className="sandbox-tip">
-          <span className="tip-key">Ctrl+Z</span> Undo
-        </div>
-        <div className="sandbox-tip">
-          <span className="tip-key">Tab</span> Indent
-        </div>
+        <div className="sandbox-tip"><span className="tip-key">Ctrl+S</span> Save</div>
+        <div className="sandbox-tip"><span className="tip-key">Ctrl+Z</span> Undo</div>
+        <div className="sandbox-tip"><span className="tip-key">Tab</span> Indent</div>
         <div className="sandbox-tip-divider" />
-        <div className="sandbox-tip">Check challenge comments in code for practice tasks.</div>
+        <div className="sandbox-tip">Live preview updates as you edit files.</div>
       </div>
     </div>
   );
