@@ -18,7 +18,7 @@ export default function App() {
           --line: rgba(255,255,255,0.08);
           --text-soft: #9CA3AF;
           --text-dim: #9ca3af;
-          --accent: #7C3AED;
+          --accent: #06B6D4;
           --accent-2: #ef4444;
           --accent-magenta: #eab308;
         }
@@ -33,7 +33,7 @@ export default function App() {
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1c1917; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #7C3AED; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #06B6D4; }
 
         @keyframes floatUp {
           0% { transform: translateY(0) rotate(-2deg); opacity: 0; }
@@ -44,8 +44,8 @@ export default function App() {
 
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes pulseGlow {
-          0%,100% { box-shadow: 0 0 20px #7C3AED77, 0 0 40px #7C3AED22; }
-          50% { box-shadow: 0 0 60px #7C3AEDcc, 0 0 100px #7C3AED44; }
+          0%,100% { box-shadow: 0 0 20px #06B6D477, 0 0 40px #06B6D422; }
+          50% { box-shadow: 0 0 60px #06B6D4cc, 0 0 100px #06B6D444; }
         }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
@@ -55,7 +55,7 @@ export default function App() {
           100% { transform: translateY(100vh); }
         }
 
-        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #7C3AED; }
+        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #06B6D4; }
 
         .noise-overlay {
           position: fixed;
@@ -71,8 +71,8 @@ export default function App() {
           position: fixed;
           inset: 0;
           background-image:
-            linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
+            linear-gradient(rgba(6, 182, 212, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(6, 182, 212, 0.06) 1px, transparent 1px);
           background-size: 50px 50px;
           pointer-events: none;
           z-index: 0;
@@ -83,7 +83,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(transparent, rgba(124, 58, 237, 0.06), transparent);
+          background: linear-gradient(transparent, rgba(6, 182, 212, 0.06), transparent);
           pointer-events: none;
           z-index: 9998;
           animation: scanline 8s linear infinite;
@@ -174,7 +174,7 @@ export default function App() {
         }
 
         .cta-btn {
-          background: #7C3AED;
+          background: #06B6D4;
           color: #0c0a09;
           border: none;
           padding: 14px 30px;
@@ -206,8 +206,8 @@ export default function App() {
         .ghost-btn:hover {
           border-color: var(--accent);
           color: var(--accent);
-          background: #7C3AED18;
-          box-shadow: 0 0 20px #7C3AED22;
+          background: #06B6D418;
+          box-shadow: 0 0 20px #06B6D422;
         }
 
         .badge {
@@ -295,7 +295,7 @@ export default function App() {
         }
 
         .token-keyword { color: #eab308; text-shadow: 0 0 8px #eab30888; }
-        .token-fn { color: #7C3AED; text-shadow: 0 0 8px #7C3AED88; }
+        .token-fn { color: #06B6D4; text-shadow: 0 0 8px #06B6D488; }
         .token-string { color: #ffee00; text-shadow: 0 0 8px #ffee0066; }
         .token-comment { color: rgba(255,255,255,0.35); font-style: italic; }
         .token-tag { color: #ef4444; text-shadow: 0 0 6px #ef444466; }
@@ -331,7 +331,7 @@ export default function App() {
         }
 
         .challenge-search:focus {
-          border-color: #7C3AED88;
+          border-color: #06B6D488;
           box-shadow: 0 0 0 3px rgba(249, 115, 22,0.12);
         }
 
@@ -366,7 +366,7 @@ export default function App() {
         }
 
         .challenge-card:focus-visible {
-          outline: 2px solid #7C3AED;
+          outline: 2px solid #06B6D4;
           outline-offset: 2px;
         }
 
