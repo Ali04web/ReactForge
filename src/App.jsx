@@ -12,15 +12,15 @@ export default function App() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --bg: #07070f;
-          --panel: #0d0d1a;
-          --panel-2: #161626;
+          --bg: #030712;
+          --panel: #111827;
+          --panel-2: #1f2937;
           --line: rgba(255,255,255,0.08);
           --text-soft: rgba(255,255,255,0.6);
           --text-dim: rgba(255,255,255,0.4);
-          --accent: #00ffe5;
-          --accent-2: #00aaff;
-          --accent-magenta: #f000ff;
+          --accent: #8b5cf6;
+          --accent-2: #06b6d4;
+          --accent-magenta: #ec4899;
         }
 
         body {
@@ -32,8 +32,8 @@ export default function App() {
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #0d0d1a; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #00ffe5; }
+        ::-webkit-scrollbar-track { background: #111827; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #8b5cf6; }
 
         @keyframes floatUp {
           0% { transform: translateY(0) rotate(-2deg); opacity: 0; }
@@ -44,8 +44,8 @@ export default function App() {
 
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes pulseGlow {
-          0%,100% { box-shadow: 0 0 20px #00ffe577, 0 0 40px #00ffe522; }
-          50% { box-shadow: 0 0 60px #00ffe5cc, 0 0 100px #00ffe544; }
+          0%,100% { box-shadow: 0 0 20px #8b5cf677, 0 0 40px #8b5cf622; }
+          50% { box-shadow: 0 0 60px #8b5cf6cc, 0 0 100px #8b5cf644; }
         }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
@@ -55,7 +55,7 @@ export default function App() {
           100% { transform: translateY(100vh); }
         }
 
-        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #00ffe5; }
+        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #8b5cf6; }
 
         .noise-overlay {
           position: fixed;
@@ -71,8 +71,8 @@ export default function App() {
           position: fixed;
           inset: 0;
           background-image:
-            linear-gradient(rgba(0,255,229,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(0,255,229,0.06) 1px, transparent 1px);
+            linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
           background-size: 50px 50px;
           pointer-events: none;
           z-index: 0;
@@ -83,7 +83,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(transparent, rgba(0,255,200,0.06), transparent);
+          background: linear-gradient(transparent, rgba(139,92,246,0.06), transparent);
           pointer-events: none;
           z-index: 9998;
           animation: scanline 8s linear infinite;
@@ -98,7 +98,7 @@ export default function App() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: rgba(7,7,15,0.85);
+          background: rgba(3,7,18,0.85);
           backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(255,255,255,0.05);
           gap: 12px;
@@ -124,7 +124,7 @@ export default function App() {
           font-weight: 700;
           color: #05050a;
           animation: spinSlow 8s linear infinite;
-          box-shadow: 0 0 16px #00ffe577;
+          box-shadow: 0 0 16px #8b5cf677;
         }
 
         .site-brand-name {
@@ -165,7 +165,7 @@ export default function App() {
           border: none;
           font-family: 'Space Mono', monospace;
         }
-        .nav-link:hover { color: #00ffc8; }
+        .nav-link:hover { color: #a855f7; }
 
         .hero-title {
           font-family: 'Unbounded', sans-serif;
@@ -182,7 +182,7 @@ export default function App() {
 
         .cta-btn {
           background: linear-gradient(135deg, var(--accent), var(--accent-2));
-          color: #07070f;
+          color: #030712;
           border: none;
           padding: 14px 30px;
           font-family: 'Space Mono', monospace;
@@ -213,8 +213,8 @@ export default function App() {
         .ghost-btn:hover {
           border-color: var(--accent);
           color: var(--accent);
-          background: #00ffe518;
-          box-shadow: 0 0 20px #00ffe522;
+          background: #8b5cf618;
+          box-shadow: 0 0 20px #8b5cf622;
         }
 
         .badge {
@@ -223,9 +223,9 @@ export default function App() {
           font-size: 11px;
           padding: 4px 14px;
           border-radius: 20px;
-          background: rgba(0,255,229,0.18);
+          background: rgba(139,92,246,0.18);
           color: var(--accent);
-          border: 1px solid rgba(0,255,229,0.5);
+          border: 1px solid rgba(139,92,246,0.5);
           letter-spacing: 1px;
           animation: slideIn 0.6s ease both;
         }
@@ -265,7 +265,7 @@ export default function App() {
           padding: 22px 12px;
           border: 1px solid rgba(255,255,255,0.07);
           border-radius: 16px;
-          background: #0d0d1a;
+          background: #111827;
           animation: fadeInScale 0.6s ease both;
         }
 
@@ -274,7 +274,7 @@ export default function App() {
         }
 
         .code-window {
-          background: #0d0d1a;
+          background: #111827;
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 14px;
           overflow: hidden;
@@ -283,7 +283,7 @@ export default function App() {
         }
 
         .code-titlebar {
-          background: #161626;
+          background: #1f2937;
           padding: 12px 16px;
           display: flex;
           align-items: center;
@@ -301,11 +301,11 @@ export default function App() {
           color: rgba(255,255,255,0.7);
         }
 
-        .token-keyword { color: #f000ff; text-shadow: 0 0 8px #f000ff88; }
-        .token-fn { color: #00ffe5; text-shadow: 0 0 8px #00ffe588; }
+        .token-keyword { color: #ec4899; text-shadow: 0 0 8px #ec489988; }
+        .token-fn { color: #8b5cf6; text-shadow: 0 0 8px #8b5cf688; }
         .token-string { color: #ffee00; text-shadow: 0 0 8px #ffee0066; }
         .token-comment { color: rgba(255,255,255,0.35); font-style: italic; }
-        .token-tag { color: #00aaff; text-shadow: 0 0 6px #00aaff66; }
+        .token-tag { color: #06b6d4; text-shadow: 0 0 6px #06b6d466; }
 
         .challenge-toolbar {
           display: flex;
@@ -326,7 +326,7 @@ export default function App() {
         .challenge-search {
           width: 240px;
           max-width: 100%;
-          background: #0d0d1a;
+          background: #111827;
           border: 1px solid rgba(255,255,255,0.08);
           color: #fff;
           border-radius: 10px;
@@ -338,8 +338,8 @@ export default function App() {
         }
 
         .challenge-search:focus {
-          border-color: #00ffe588;
-          box-shadow: 0 0 0 3px rgba(0,255,229,0.12);
+          border-color: #8b5cf688;
+          box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
         }
 
         .tab-btn {
@@ -373,7 +373,7 @@ export default function App() {
         }
 
         .challenge-card:focus-visible {
-          outline: 2px solid #00ffe5;
+          outline: 2px solid #8b5cf6;
           outline-offset: 2px;
         }
 
@@ -394,7 +394,7 @@ export default function App() {
 
         .hook-card {
           padding: 18px;
-          background: #0d0d1a;
+          background: #111827;
           border-radius: 12px;
           cursor: pointer;
           transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -409,12 +409,12 @@ export default function App() {
           margin: 0 auto;
           text-align: center;
           padding: clamp(36px,6vw,60px) clamp(20px,5vw,40px);
-          border: 1px solid rgba(0,255,229,0.4);
+          border: 1px solid rgba(139,92,246,0.4);
           border-radius: 24px;
-          background: linear-gradient(135deg, rgba(0,255,229,0.08), rgba(0,170,255,0.06));
+          background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(0,170,255,0.06));
           position: relative;
           overflow: hidden;
-          box-shadow: 0 0 60px rgba(0,255,229,0.1);
+          box-shadow: 0 0 60px rgba(139,92,246,0.1);
         }
 
         .site-footer {

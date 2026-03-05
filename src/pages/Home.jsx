@@ -94,14 +94,14 @@ const STATS = [
 ];
 
 const HOOKS = [
-  { name: "useState", color: "#00ffe5", desc: "Local state management." },
-  { name: "useEffect", color: "#f000ff", desc: "Side effects and lifecycle." },
-  { name: "useContext", color: "#00aaff", desc: "Shared values in a tree." },
-  { name: "useRef", color: "#ffee00", desc: "Mutable references and DOM access." },
-  { name: "useMemo", color: "#ff3d00", desc: "Memoized expensive calculations." },
-  { name: "useCallback", color: "#7dff00", desc: "Stable callback references." },
-  { name: "useReducer", color: "#f000ff", desc: "Complex state transitions." },
-  { name: "Custom Hook", color: "#00ffe5", desc: "Reusable logic extraction." },
+  { name: "useState", color: "#06b6d4", desc: "Local state management." },
+  { name: "useEffect", color: "#8b5cf6", desc: "Side effects and lifecycle." },
+  { name: "useContext", color: "#3b82f6", desc: "Shared values in a tree." },
+  { name: "useRef", color: "#f59e0b", desc: "Mutable references and DOM access." },
+  { name: "useMemo", color: "#f43f5e", desc: "Memoized expensive calculations." },
+  { name: "useCallback", color: "#10b981", desc: "Stable callback references." },
+  { name: "useReducer", color: "#ec4899", desc: "Complex state transitions." },
+  { name: "Custom Hook", color: "#0ea5e9", desc: "Reusable logic extraction." },
 ];
 
 const PARTICLES_DATA = FLOATING_SNIPPETS.map((snippet, index) => ({
@@ -137,7 +137,7 @@ function FloatingParticle({ snippet, style }) {
 
 function ChallengeCard({ challenge, index, onLaunch }) {
   const [hovered, setHovered] = useState(false);
-  const colors = ["#00ffe5", "#f000ff", "#00d4ff", "#ffee00", "#ff3d00", "#7dff00"];
+  const colors = ["#8b5cf6", "#ec4899", "#00d4ff", "#ffee00", "#ff3d00", "#7dff00"];
   const color = colors[index % colors.length];
 
   return (
@@ -154,7 +154,7 @@ function ChallengeCard({ challenge, index, onLaunch }) {
           : "none",
         transform: hovered ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)",
         transition: "all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)",
-        background: hovered ? `linear-gradient(135deg, ${color}1a, #0d0d1a)` : "#0d0d1a",
+        background: hovered ? `linear-gradient(135deg, ${color}1a, #111827)` : "#111827",
       }}
       aria-label={`Open ${challenge.title} challenge in sandbox`}
     >
@@ -257,7 +257,7 @@ export default function Home() {
           left: "-10%",
           width: "500px",
           height: "500px",
-          background: "radial-gradient(circle, rgba(0,255,229,0.15) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -269,7 +269,7 @@ export default function Home() {
           right: "-10%",
           width: "600px",
           height: "600px",
-          background: "radial-gradient(circle, rgba(240,0,255,0.13) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(236,72,153,0.13) 0%, transparent 70%)",
           pointerEvents: "none",
           zIndex: 0,
         }}
@@ -286,10 +286,10 @@ export default function Home() {
               <br />
               <span
                 style={{
-                  background: "linear-gradient(90deg,#00ffe5,#00aaff)",
+                  background: "linear-gradient(90deg,#8b5cf6,#06b6d4)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                  filter: "drop-shadow(0 0 20px #00ffe588)",
+                  filter: "drop-shadow(0 0 20px #8b5cf688)",
                 }}
               >
                 Practice.
@@ -329,8 +329,8 @@ export default function Home() {
                       fontFamily: "'Unbounded', sans-serif",
                       fontSize: "20px",
                       fontWeight: 700,
-                      color: "#00ffe5",
-                      textShadow: "0 0 16px #00ffe588",
+                      color: "#8b5cf6",
+                      textShadow: "0 0 16px #8b5cf688",
                     }}
                   >
                     {item.value}
@@ -404,7 +404,7 @@ export default function Home() {
           style={{
             height: "1px",
             background:
-              "linear-gradient(90deg, transparent, rgba(0,255,229,0.5), rgba(240,0,255,0.3), transparent)",
+              "linear-gradient(90deg, transparent, rgba(139,92,246,0.5), rgba(236,72,153,0.3), transparent)",
             margin: "0 clamp(20px,5vw,80px)",
           }}
         />
@@ -414,7 +414,7 @@ export default function Home() {
             <div>
               <p
                 style={{
-                  color: "#00ffe5",
+                  color: "#8b5cf6",
                   fontSize: "12px",
                   letterSpacing: "3px",
                   textTransform: "uppercase",
@@ -442,7 +442,7 @@ export default function Home() {
                 style={{
                   display: "flex",
                   gap: "6px",
-                  background: "#0d0d1a",
+                  background: "#111827",
                   padding: "5px",
                   borderRadius: "30px",
                   border: "1px solid rgba(255,255,255,0.07)",
@@ -457,10 +457,10 @@ export default function Home() {
                       className="tab-btn"
                       onClick={() => setActiveDifficulty(value)}
                       style={{
-                        color: selected ? "#07070f" : "rgba(255,255,255,0.45)",
-                        background: selected ? "#00ffe5" : "transparent",
+                        color: selected ? "#030712" : "rgba(255,255,255,0.45)",
+                        background: selected ? "#8b5cf6" : "transparent",
                         fontWeight: selected ? 700 : 400,
-                        boxShadow: selected ? "0 0 14px #00ffe577" : "none",
+                        boxShadow: selected ? "0 0 14px #8b5cf677" : "none",
                       }}
                     >
                       {level}
@@ -493,7 +493,7 @@ export default function Home() {
           <div style={{ textAlign: "center", marginBottom: "42px" }}>
             <p
               style={{
-                color: "#f000ff",
+                color: "#ec4899",
                 fontSize: "12px",
                 letterSpacing: "3px",
                 textTransform: "uppercase",
@@ -531,7 +531,7 @@ export default function Home() {
               style={{
                 position: "absolute",
                 inset: 0,
-                background: "radial-gradient(ellipse at center, rgba(0,255,229,0.12) 0%, transparent 70%)",
+                background: "radial-gradient(ellipse at center, rgba(139,92,246,0.12) 0%, transparent 70%)",
                 pointerEvents: "none",
               }}
             />
