@@ -12,20 +12,20 @@ export default function App() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --bg: #0c0a09;
-          --panel: #1c1917;
-          --panel-2: #292524;
+          --bg: #0B0B0F;
+          --panel: #111827;
+          --panel-2: #1f2937;
           --line: rgba(255,255,255,0.08);
-          --text-soft: rgba(255,255,255,0.6);
-          --text-dim: rgba(255,255,255,0.4);
-          --accent: #f97316;
+          --text-soft: #9CA3AF;
+          --text-dim: #9ca3af;
+          --accent: #7C3AED;
           --accent-2: #ef4444;
           --accent-magenta: #eab308;
         }
 
         body {
           background: var(--bg);
-          color: #fff;
+          color: #E5E7EB;
           font-family: 'Space Mono', monospace;
           overflow-x: hidden;
           min-height: 100vh;
@@ -33,7 +33,7 @@ export default function App() {
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
         ::-webkit-scrollbar-track { background: #1c1917; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #f97316; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #7C3AED; }
 
         @keyframes floatUp {
           0% { transform: translateY(0) rotate(-2deg); opacity: 0; }
@@ -44,8 +44,8 @@ export default function App() {
 
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes pulseGlow {
-          0%,100% { box-shadow: 0 0 20px #f9731677, 0 0 40px #f9731622; }
-          50% { box-shadow: 0 0 60px #f97316cc, 0 0 100px #f9731644; }
+          0%,100% { box-shadow: 0 0 20px #7C3AED77, 0 0 40px #7C3AED22; }
+          50% { box-shadow: 0 0 60px #7C3AEDcc, 0 0 100px #7C3AED44; }
         }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
@@ -55,7 +55,7 @@ export default function App() {
           100% { transform: translateY(100vh); }
         }
 
-        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #f97316; }
+        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #7C3AED; }
 
         .noise-overlay {
           position: fixed;
@@ -71,8 +71,8 @@ export default function App() {
           position: fixed;
           inset: 0;
           background-image:
-            linear-gradient(rgba(249, 115, 22,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(249, 115, 22,0.06) 1px, transparent 1px);
+            linear-gradient(rgba(124, 58, 237, 0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(124, 58, 237, 0.06) 1px, transparent 1px);
           background-size: 50px 50px;
           pointer-events: none;
           z-index: 0;
@@ -83,7 +83,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(transparent, rgba(249, 115, 22,0.06), transparent);
+          background: linear-gradient(transparent, rgba(124, 58, 237, 0.06), transparent);
           pointer-events: none;
           z-index: 9998;
           animation: scanline 8s linear infinite;
@@ -98,7 +98,7 @@ export default function App() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: rgba(12, 10, 9,0.85);
+          background: rgba(11, 11, 15, 0.85);
           backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(255,255,255,0.05);
           gap: 12px;
@@ -174,7 +174,7 @@ export default function App() {
         }
 
         .cta-btn {
-          background: linear-gradient(135deg, var(--accent), var(--accent-2));
+          background: #7C3AED;
           color: #0c0a09;
           border: none;
           padding: 14px 30px;
@@ -192,7 +192,7 @@ export default function App() {
 
         .ghost-btn {
           background: transparent;
-          color: #fff;
+          color: #E5E7EB;
           border: 1px solid rgba(255,255,255,0.2);
           padding: 14px 30px;
           font-family: 'Space Mono', monospace;
@@ -206,8 +206,8 @@ export default function App() {
         .ghost-btn:hover {
           border-color: var(--accent);
           color: var(--accent);
-          background: #f9731618;
-          box-shadow: 0 0 20px #f9731622;
+          background: #7C3AED18;
+          box-shadow: 0 0 20px #7C3AED22;
         }
 
         .badge {
@@ -295,7 +295,7 @@ export default function App() {
         }
 
         .token-keyword { color: #eab308; text-shadow: 0 0 8px #eab30888; }
-        .token-fn { color: #f97316; text-shadow: 0 0 8px #f9731688; }
+        .token-fn { color: #7C3AED; text-shadow: 0 0 8px #7C3AED88; }
         .token-string { color: #ffee00; text-shadow: 0 0 8px #ffee0066; }
         .token-comment { color: rgba(255,255,255,0.35); font-style: italic; }
         .token-tag { color: #ef4444; text-shadow: 0 0 6px #ef444466; }
@@ -321,7 +321,7 @@ export default function App() {
           max-width: 100%;
           background: #1c1917;
           border: 1px solid rgba(255,255,255,0.08);
-          color: #fff;
+          color: #E5E7EB;
           border-radius: 10px;
           padding: 10px 12px;
           font-family: 'Space Mono', monospace;
@@ -331,7 +331,7 @@ export default function App() {
         }
 
         .challenge-search:focus {
-          border-color: #f9731688;
+          border-color: #7C3AED88;
           box-shadow: 0 0 0 3px rgba(249, 115, 22,0.12);
         }
 
@@ -366,7 +366,7 @@ export default function App() {
         }
 
         .challenge-card:focus-visible {
-          outline: 2px solid #f97316;
+          outline: 2px solid #7C3AED;
           outline-offset: 2px;
         }
 

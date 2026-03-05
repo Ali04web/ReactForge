@@ -3,11 +3,11 @@
 /* ─── page shell ──────────────────────────────────────────────── */
 .sandbox-page {
   height: 100vh;
-  background: #0c0a09;
+  background: #0B0B0F;
   display: flex;
   flex-direction: column;
   font-family: "Space Mono", monospace;
-  color: #f8fafc;
+  color: #E5E7EB;
   overflow: hidden;
 }
 
@@ -31,8 +31,8 @@
   gap: 14px;
   padding: 0 14px;
   min-height: 48px;
-  background: rgba(12, 10, 9, 0.96);
-  border-bottom: 1px solid rgba(249, 115, 22, 0.16);
+  background: rgba(11, 11, 15, 0.96);
+  border-bottom: 1px solid #1F2937;
 }
 
 .sandbox-header-left {
@@ -44,7 +44,7 @@
 
 .sandbox-back-btn {
   background: transparent;
-  border: 1px solid rgba(249, 115, 22, 0.28);
+  border: 1px solid #1F2937;
   color: #cbd5e1;
   padding: 5px 10px;
   border-radius: 6px;
@@ -82,7 +82,7 @@
   font-family: "Unbounded", sans-serif;
   font-size: 12px;
   font-weight: 700;
-  color: #f8fafc;
+  color: #E5E7EB;
 }
 
 /* ── template tabs ── */
@@ -103,7 +103,7 @@
 .template-tab {
   background: transparent;
   border: 1px solid transparent;
-  color: #94a3b8;
+  color: #9CA3AF;
   padding: 5px 10px;
   border-radius: 6px;
   font-size: 11px;
@@ -140,7 +140,7 @@
 .template-tabs-divider {
   width: 1px;
   height: 20px;
-  background: rgba(249, 115, 22, 0.2);
+  background: #1F2937;
   flex-shrink: 0;
   margin: 0 4px;
 }
@@ -163,8 +163,8 @@
   justify-content: space-between;
   gap: 12px;
   padding: 8px 14px;
-  border-bottom: 1px solid rgba(249, 115, 22, 0.18);
-  background: rgba(28, 25, 23, 0.95);
+  border-bottom: 1px solid #1F2937;
+  background: rgba(17, 24, 39, 0.95);
 }
 
 .hint-content {
@@ -237,8 +237,8 @@
   min-height: 0;
   display: flex;
   flex-direction: column;
-  background: #0c0a09;
-  border-right: 1px solid rgba(249, 115, 22, 0.16);
+  background: #0B0B0F;
+  border-right: 1px solid #1F2937;
   overflow: hidden;
 }
 
@@ -249,8 +249,8 @@
   padding: 10px 12px;
   font-size: 11px;
   letter-spacing: 0.8px;
-  color: #94a3b8;
-  border-bottom: 1px solid rgba(249, 115, 22, 0.14);
+  color: #9CA3AF;
+  border-bottom: 1px solid #1F2937;
   text-transform: uppercase;
   flex-shrink: 0;
 }
@@ -258,7 +258,7 @@
 /* new-file button & input */
 .new-file-btn {
   background: transparent;
-  border: 1px solid rgba(249, 115, 22, 0.35);
+  border: 1px solid #1F2937;
   color: #f97316;
   width: 22px;
   height: 22px;
@@ -283,9 +283,9 @@
 
 .new-file-input {
   width: 100%;
-  background: #292524;
-  border: 1px solid rgba(249, 115, 22, 0.4);
-  color: #f8fafc;
+  background: #1F2937;
+  border: 1px solid #1F2937;
+  color: #E5E7EB;
   border-radius: 4px;
   padding: 3px 6px;
   font-family: "Fira Code", monospace;
@@ -295,7 +295,7 @@
 
 .new-file-confirm {
   background: rgba(249, 115, 22, 0.15);
-  border: 1px solid rgba(249, 115, 22, 0.4);
+  border: 1px solid #1F2937;
   color: #f97316;
   border-radius: 4px;
   padding: 2px 6px;
@@ -342,7 +342,7 @@
 .sandbox-workbench .sp-layout {
   border: none !important;
   border-radius: 0 !important;
-  background: #1c1917 !important;
+  background: #111827 !important;
 }
 
 .sandbox-workbench .sp-stack {
@@ -350,13 +350,13 @@
 }
 
 .sandbox-workbench .sp-code-editor {
-  background: #292524 !important;
-  border-right: 1px solid rgba(249, 115, 22, 0.16) !important;
+  background: #1F2937 !important;
+  border-right: 1px solid #1F2937 !important;
 }
 
 .sandbox-workbench .sp-tabs {
-  background: #292524 !important;
-  border-bottom: 1px solid rgba(249, 115, 22, 0.14) !important;
+  background: #1F2937 !important;
+  border-bottom: 1px solid #1F2937 !important;
 }
 
 .sandbox-workbench .sp-tab-button {
@@ -370,16 +370,16 @@
 }
 
 .sandbox-workbench .sp-preview {
-  background: #1c1917 !important;
+  background: #111827 !important;
 }
 
 .sandbox-workbench .sp-preview-container {
-  background: #1c1917 !important;
+  background: #111827 !important;
 }
 
 .sandbox-workbench .sp-navigator {
-  background: #292524 !important;
-  border-bottom: 1px solid rgba(249, 115, 22, 0.14) !important;
+  background: #1F2937 !important;
+  border-bottom: 1px solid #1F2937 !important;
 }
 
 .sandbox-workbench ::-webkit-scrollbar {
@@ -388,7 +388,7 @@
 }
 
 .sandbox-workbench ::-webkit-scrollbar-track {
-  background: #0c0a09;
+  background: #0B0B0F;
 }
 
 .sandbox-workbench ::-webkit-scrollbar-thumb {
@@ -404,8 +404,8 @@
   align-items: center;
   gap: 12px;
   padding: 6px 14px;
-  background: rgba(12, 10, 9, 0.98);
-  border-top: 1px solid rgba(249, 115, 22, 0.14);
+  background: rgba(11, 11, 15, 0.98);
+  border-top: 1px solid #1F2937;
   font-size: 11px;
   color: #64748b;
   font-family: "Fira Code", monospace;
@@ -419,9 +419,9 @@
 }
 
 .tip-key {
-  background: #292524;
-  border: 1px solid rgba(249, 115, 22, 0.22);
-  color: #94a3b8;
+  background: #1F2937;
+  border: 1px solid #1F2937;
+  color: #9CA3AF;
   border-radius: 3px;
   padding: 1px 5px;
   font-size: 10px;
@@ -430,7 +430,7 @@
 .sandbox-tip-divider {
   width: 1px;
   height: 14px;
-  background: rgba(249, 115, 22, 0.22);
+  background: #1F2937;
 }
 
 /* ─── responsive ──────────────────────────────────────────────── */
@@ -447,7 +447,7 @@
 
   .ide-sidebar {
     max-height: 220px;
-    border-bottom: 1px solid rgba(249, 115, 22, 0.16);
+    border-bottom: 1px solid #1F2937;
     border-right: none;
   }
 

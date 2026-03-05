@@ -22,7 +22,7 @@ const BASE_STYLE_FILE = `* {
 
 body {
   font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #090b10;
+  background: #0B0B0F;
   color: #f2f7ff;
   min-height: 100vh;
 }
@@ -87,7 +87,7 @@ export default function App() {
 `,
       "/styles.css": `${BASE_STYLE_FILE}
 .panel {
-  background: #121623;
+  background: #111827;
   border: 1px solid #24314a;
   border-radius: 12px;
   padding: 24px;
@@ -156,7 +156,7 @@ export default function App() {
 `,
       "/styles.css": `${BASE_STYLE_FILE}
 .panel {
-  background: #121623;
+  background: #111827;
   border: 1px solid #24314a;
   border-radius: 12px;
   padding: 24px;
@@ -243,7 +243,7 @@ export default function App() {
 }
 article {
   border: 1px solid #23324d;
-  background: #111726;
+  background: #111827;
   border-radius: 10px;
   padding: 12px;
 }
@@ -354,7 +354,7 @@ export default function App() {
 .panel {
   width: min(500px, 100%);
   border: 1px solid #22314a;
-  background: #111726;
+  background: #111827;
   border-radius: 12px;
   padding: 24px;
 }
@@ -370,7 +370,7 @@ ul {
   gap: 6px;
 }
 li {
-  background: #0d121f;
+  background: #111827;
   border: 1px solid #1f2a42;
   border-radius: 8px;
   padding: 8px;
@@ -428,7 +428,7 @@ export default function App() {
 .panel {
   width: min(500px, 100%);
   border: 1px solid #22314a;
-  background: #111726;
+  background: #111827;
   border-radius: 12px;
   padding: 24px;
 }
@@ -441,7 +441,7 @@ ul {
   margin-top: 12px;
 }
 li {
-  background: #0d121f;
+  background: #111827;
   border: 1px solid #1f2a42;
   border-radius: 8px;
   padding: 8px;
@@ -459,9 +459,9 @@ li {
 /* ─── theme ───────────────────────────────────────────────────── */
 const REACTFORGE_THEME = {
   colors: {
-    surface1: "#0c0a09",
-    surface2: "#1c1917",
-    surface3: "#292524",
+    surface1: "#0B0B0F",
+    surface2: "#111827",
+    surface3: "#1F2937",
     clickable: "#a8a29e",
     base: "#f5f5f4",
     disabled: "#57534e",
@@ -514,7 +514,7 @@ export default function App() {
   width: min(680px, 100%);
   border: 1px dashed #3b4f71;
   border-radius: 12px;
-  background: #0d121e;
+  background: #0B0B0F;
   padding: 26px;
   text-align: left;
 }
