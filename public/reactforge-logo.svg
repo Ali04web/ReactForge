@@ -19,12 +19,12 @@
     x="128"
     y="128"
     fill="#ffffff"
-    font-size="74"
+    font-size="104"
     font-family="Segoe UI, Arial, sans-serif"
     font-weight="900"
     text-anchor="middle"
     dominant-baseline="middle"
-    letter-spacing="-2"
+    letter-spacing="-8"
   >
     RF
   </text>
