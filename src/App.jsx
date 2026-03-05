@@ -12,15 +12,15 @@ export default function App() {
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
         :root {
-          --bg: #030712;
-          --panel: #111827;
-          --panel-2: #1f2937;
+          --bg: #0c0a09;
+          --panel: #1c1917;
+          --panel-2: #292524;
           --line: rgba(255,255,255,0.08);
           --text-soft: rgba(255,255,255,0.6);
           --text-dim: rgba(255,255,255,0.4);
-          --accent: #8b5cf6;
-          --accent-2: #06b6d4;
-          --accent-magenta: #ec4899;
+          --accent: #f97316;
+          --accent-2: #ef4444;
+          --accent-magenta: #eab308;
         }
 
         body {
@@ -32,8 +32,8 @@ export default function App() {
         }
 
         ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #111827; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #8b5cf6; }
+        ::-webkit-scrollbar-track { background: #1c1917; }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; box-shadow: 0 0 8px #f97316; }
 
         @keyframes floatUp {
           0% { transform: translateY(0) rotate(-2deg); opacity: 0; }
@@ -44,8 +44,8 @@ export default function App() {
 
         @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
         @keyframes pulseGlow {
-          0%,100% { box-shadow: 0 0 20px #8b5cf677, 0 0 40px #8b5cf622; }
-          50% { box-shadow: 0 0 60px #8b5cf6cc, 0 0 100px #8b5cf644; }
+          0%,100% { box-shadow: 0 0 20px #f9731677, 0 0 40px #f9731622; }
+          50% { box-shadow: 0 0 60px #f97316cc, 0 0 100px #f9731644; }
         }
         @keyframes spinSlow { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes slideIn { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
@@ -55,7 +55,7 @@ export default function App() {
           100% { transform: translateY(100vh); }
         }
 
-        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #8b5cf6; }
+        .cursor-blink { animation: blink 1s step-end infinite; color: var(--accent); text-shadow: 0 0 8px #f97316; }
 
         .noise-overlay {
           position: fixed;
@@ -71,8 +71,8 @@ export default function App() {
           position: fixed;
           inset: 0;
           background-image:
-            linear-gradient(rgba(139,92,246,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(139,92,246,0.06) 1px, transparent 1px);
+            linear-gradient(rgba(249, 115, 22,0.06) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(249, 115, 22,0.06) 1px, transparent 1px);
           background-size: 50px 50px;
           pointer-events: none;
           z-index: 0;
@@ -83,7 +83,7 @@ export default function App() {
           left: 0;
           right: 0;
           height: 3px;
-          background: linear-gradient(transparent, rgba(139,92,246,0.06), transparent);
+          background: linear-gradient(transparent, rgba(249, 115, 22,0.06), transparent);
           pointer-events: none;
           z-index: 9998;
           animation: scanline 8s linear infinite;
@@ -98,7 +98,7 @@ export default function App() {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          background: rgba(3,7,18,0.85);
+          background: rgba(12, 10, 9,0.85);
           backdrop-filter: blur(20px);
           border-bottom: 1px solid rgba(255,255,255,0.05);
           gap: 12px;
@@ -112,19 +112,12 @@ export default function App() {
         }
 
         .site-logo {
-          width: 32px;
-          height: 32px;
-          background: linear-gradient(135deg, var(--accent), var(--accent-2));
-          border-radius: 8px;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          font-size: 10px;
-          letter-spacing: 0.5px;
-          font-weight: 700;
-          color: #05050a;
+          width: 36px;
+          height: 36px;
+          display: block;
+          flex: 0 0 auto;
           animation: spinSlow 8s linear infinite;
-          box-shadow: 0 0 16px #8b5cf677;
+          filter: drop-shadow(0 0 14px rgba(56, 189, 248, 0.55));
         }
 
         .site-brand-name {
@@ -182,7 +175,7 @@ export default function App() {
 
         .cta-btn {
           background: linear-gradient(135deg, var(--accent), var(--accent-2));
-          color: #030712;
+          color: #0c0a09;
           border: none;
           padding: 14px 30px;
           font-family: 'Space Mono', monospace;
@@ -213,8 +206,8 @@ export default function App() {
         .ghost-btn:hover {
           border-color: var(--accent);
           color: var(--accent);
-          background: #8b5cf618;
-          box-shadow: 0 0 20px #8b5cf622;
+          background: #f9731618;
+          box-shadow: 0 0 20px #f9731622;
         }
 
         .badge {
@@ -223,9 +216,9 @@ export default function App() {
           font-size: 11px;
           padding: 4px 14px;
           border-radius: 20px;
-          background: rgba(139,92,246,0.18);
+          background: rgba(249, 115, 22,0.18);
           color: var(--accent);
-          border: 1px solid rgba(139,92,246,0.5);
+          border: 1px solid rgba(249, 115, 22,0.5);
           letter-spacing: 1px;
           animation: slideIn 0.6s ease both;
         }
@@ -265,7 +258,7 @@ export default function App() {
           padding: 22px 12px;
           border: 1px solid rgba(255,255,255,0.07);
           border-radius: 16px;
-          background: #111827;
+          background: #1c1917;
           animation: fadeInScale 0.6s ease both;
         }
 
@@ -274,7 +267,7 @@ export default function App() {
         }
 
         .code-window {
-          background: #111827;
+          background: #1c1917;
           border: 1px solid rgba(255,255,255,0.08);
           border-radius: 14px;
           overflow: hidden;
@@ -283,7 +276,7 @@ export default function App() {
         }
 
         .code-titlebar {
-          background: #1f2937;
+          background: #292524;
           padding: 12px 16px;
           display: flex;
           align-items: center;
@@ -301,11 +294,11 @@ export default function App() {
           color: rgba(255,255,255,0.7);
         }
 
-        .token-keyword { color: #ec4899; text-shadow: 0 0 8px #ec489988; }
-        .token-fn { color: #8b5cf6; text-shadow: 0 0 8px #8b5cf688; }
+        .token-keyword { color: #eab308; text-shadow: 0 0 8px #eab30888; }
+        .token-fn { color: #f97316; text-shadow: 0 0 8px #f9731688; }
         .token-string { color: #ffee00; text-shadow: 0 0 8px #ffee0066; }
         .token-comment { color: rgba(255,255,255,0.35); font-style: italic; }
-        .token-tag { color: #06b6d4; text-shadow: 0 0 6px #06b6d466; }
+        .token-tag { color: #ef4444; text-shadow: 0 0 6px #ef444466; }
 
         .challenge-toolbar {
           display: flex;
@@ -326,7 +319,7 @@ export default function App() {
         .challenge-search {
           width: 240px;
           max-width: 100%;
-          background: #111827;
+          background: #1c1917;
           border: 1px solid rgba(255,255,255,0.08);
           color: #fff;
           border-radius: 10px;
@@ -338,8 +331,8 @@ export default function App() {
         }
 
         .challenge-search:focus {
-          border-color: #8b5cf688;
-          box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+          border-color: #f9731688;
+          box-shadow: 0 0 0 3px rgba(249, 115, 22,0.12);
         }
 
         .tab-btn {
@@ -373,7 +366,7 @@ export default function App() {
         }
 
         .challenge-card:focus-visible {
-          outline: 2px solid #8b5cf6;
+          outline: 2px solid #f97316;
           outline-offset: 2px;
         }
 
@@ -394,7 +387,7 @@ export default function App() {
 
         .hook-card {
           padding: 18px;
-          background: #111827;
+          background: #1c1917;
           border-radius: 12px;
           cursor: pointer;
           transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
@@ -409,12 +402,12 @@ export default function App() {
           margin: 0 auto;
           text-align: center;
           padding: clamp(36px,6vw,60px) clamp(20px,5vw,40px);
-          border: 1px solid rgba(139,92,246,0.4);
+          border: 1px solid rgba(249, 115, 22,0.4);
           border-radius: 24px;
-          background: linear-gradient(135deg, rgba(139,92,246,0.08), rgba(0,170,255,0.06));
+          background: linear-gradient(135deg, rgba(249, 115, 22,0.08), rgba(0,170,255,0.06));
           position: relative;
           overflow: hidden;
-          box-shadow: 0 0 60px rgba(139,92,246,0.1);
+          box-shadow: 0 0 60px rgba(249, 115, 22,0.1);
         }
 
         .site-footer {
@@ -501,7 +494,7 @@ function HomeWithNav() {
 
       <nav className="site-nav">
         <div className="site-brand">
-          <div className="site-logo">RF</div>
+          <img className="site-logo" src="/reactforge-logo.svg" alt="ReactForge logo" />
           <span className="site-brand-name">ReactForge</span>
         </div>
 
