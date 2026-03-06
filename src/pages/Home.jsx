@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 const FLOATING_SNIPPETS = [
@@ -551,7 +551,7 @@ export default function Home() {
               Open a template, complete the challenge comments, and iterate in live preview until your answer is solid.
             </p>
             <div style={{ display: "flex", gap: "14px", justifyContent: "center", flexWrap: "wrap" }}>
-              <button className="cta-btn" onClick={() => openChallenge("/sandbox")}>
+              <button className="cta-btn" onClick={() => openTemplate("blank")}>
                 Start Practicing
               </button>
               <button

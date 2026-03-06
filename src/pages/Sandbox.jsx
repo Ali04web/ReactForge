@@ -1,13 +1,7 @@
-﻿import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import {
-  SandpackProvider,
-  SandpackLayout,
-  SandpackCodeEditor,
-  SandpackPreview,
-  SandpackFileExplorer,
-  useSandpack,
-} from "@codesandbox/sandpack-react";
+import SandboxWorkbench from "./sandbox/SandboxWorkbench.jsx";
+import { formatDuration, useCodingTimer } from "./sandbox/sandboxWorkbenchUtils.js";
 import "./Sandbox.css";
 
 /* ─── constants ───────────────────────────────────────────────── */
@@ -456,39 +450,6 @@ li {
   },
 };
 
-/* ─── theme ───────────────────────────────────────────────────── */
-const REACTFORGE_THEME = {
-  colors: {
-    surface1: "#0B0B0F",
-    surface2: "#111827",
-    surface3: "#1F2937",
-    clickable: "#a8a29e",
-    base: "#f5f5f4",
-    disabled: "#57534e",
-    hover: "#f97316",
-    accent: "#f97316",
-    error: "#ef4444",
-    errorSurface: "#450a0a",
-  },
-  syntax: {
-    plain: "#f5f5f4",
-    comment: { color: "#78716c", fontStyle: "italic" },
-    keyword: "#eab308",
-    tag: "#ef4444",
-    punctuation: "#a8a29e",
-    definition: "#f97316",
-    property: "#10b981",
-    static: "#10b981",
-    string: "#f59e0b",
-  },
-  font: {
-    body: "'Space Mono', 'Fira Code', monospace",
-    mono: "'Fira Code', 'Cascadia Code', monospace",
-    size: "13px",
-    lineHeight: "1.65",
-  },
-};
-
 /* ─── helpers ─────────────────────────────────────────────────── */
 const isValidTemplate = (key) =>
   Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATE_LIBRARY, key));
@@ -523,55 +484,6 @@ p { color: #a4b5d3; line-height: 1.6; }
 `,
 });
 
-/* ─── NewFileButton (inner – needs useSandpack) ───────────────── */
-function NewFileButton() {
-  const { sandpack } = useSandpack();
-  const [showInput, setShowInput] = useState(false);
-  const [fileName, setFileName] = useState("");
-
-  const createFile = () => {
-    const name = fileName.trim();
-    if (!name) return;
-    const path = name.startsWith("/") ? name : `/${name}`;
-    sandpack.addFile(path, "");
-    sandpack.openFile(path);
-    setFileName("");
-    setShowInput(false);
-  };
-
-  if (!showInput) {
-    return (
-      <button
-        type="button"
-        className="new-file-btn"
-        onClick={() => setShowInput(true)}
-        title="New file"
-      >
-        +
-      </button>
-    );
-  }
-
-  return (
-    <div className="new-file-input-row">
-      <input
-        className="new-file-input"
-        value={fileName}
-        onChange={(e) => setFileName(e.target.value)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") createFile();
-          if (e.key === "Escape") { setShowInput(false); setFileName(""); }
-        }}
-        placeholder="filename.js"
-        autoFocus
-      />
-      <button type="button" className="new-file-confirm" onClick={createFile}>
-        ✓
-      </button>
-    </div>
-  );
-}
-
 /* ─── main Sandbox component ──────────────────────────────────── */
 export default function Sandbox() {
   const navigate = useNavigate();
@@ -600,6 +512,8 @@ export default function Sandbox() {
   const activeTemplate = isChallengeMode ? DEFAULT_TEMPLATE_KEY : sandboxState.key;
   const activeChallenge = isChallengeMode ? CHALLENGE_LIBRARY[sandboxState.key] : null;
   const activeTemplateData = TEMPLATE_LIBRARY[activeTemplate];
+  const workspaceId = `${sandboxState.mode}:${sandboxState.key}`;
+  const codingTimer = useCodingTimer(workspaceId);
 
   const editorFiles = useMemo(() => {
     if (isChallengeMode && activeChallenge) {
@@ -688,7 +602,13 @@ export default function Sandbox() {
           ))}
         </div>
 
-        <span className="sandbox-active-label">{activeLabel}</span>
+        <div className="sandbox-header-right">
+          <div className={`sandbox-timer-pill ${codingTimer.isActive ? "active" : ""}`}>
+            <span>{codingTimer.isActive ? "Tracking" : "Idle"}</span>
+            <strong>{formatDuration(codingTimer.sessionMs)}</strong>
+          </div>
+          <span className="sandbox-active-label">{activeLabel}</span>
+        </div>
       </header>
 
       {/* ── challenge hint bar ── */}
@@ -711,59 +631,13 @@ export default function Sandbox() {
 
       {/* ── workbench ── */}
       <div className="sandbox-workbench">
-        <SandpackProvider
+        <SandboxWorkbench
           key={`${sandboxState.mode}-${sandboxState.key}-${allSolutionsUnlocked ? "u" : "l"}`}
-          template="react"
-          theme={REACTFORGE_THEME}
-          files={editorFiles}
-          options={{
-            activeFile: "/App.js",
-            visibleFiles: ["/App.js", "/styles.css"],
-            externalResources: [
-              "https://fonts.googleapis.com/css2?family=Fira+Code:wght@300;400;600&display=swap",
-            ],
-          }}
-        >
-          <div className="sandbox-ide-grid">
-            {/* sidebar – file explorer */}
-            <aside className="ide-sidebar">
-              <div className="explorer-header">
-                <span>EXPLORER</span>
-                <NewFileButton />
-              </div>
-              <SandpackFileExplorer
-                autoHiddenFiles
-                style={{ flex: 1, minHeight: 0 }}
-              />
-            </aside>
-
-            {/* editor + preview */}
-            <SandpackLayout className="sandbox-layout">
-              <SandpackCodeEditor
-                style={{ height: "100%" }}
-                showLineNumbers
-                showTabs
-                closableTabs
-                wrapContent
-              />
-              <SandpackPreview
-                style={{ height: "100%" }}
-                showNavigator
-                showRefreshButton
-                showOpenInCodeSandbox={false}
-              />
-            </SandpackLayout>
-          </div>
-        </SandpackProvider>
-      </div>
-
-      {/* ── footer ── */}
-      <div className="sandbox-footer-tips">
-        <div className="sandbox-tip"><span className="tip-key">Ctrl+S</span> Save</div>
-        <div className="sandbox-tip"><span className="tip-key">Ctrl+Z</span> Undo</div>
-        <div className="sandbox-tip"><span className="tip-key">Tab</span> Indent</div>
-        <div className="sandbox-tip-divider" />
-        <div className="sandbox-tip">Live preview updates as you type.</div>
+          activeLabel={activeLabel}
+          codingTimer={codingTimer}
+          initialFiles={editorFiles}
+          workspaceId={workspaceId}
+        />
       </div>
     </div>
   );
