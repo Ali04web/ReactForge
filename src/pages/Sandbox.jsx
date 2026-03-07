@@ -1,220 +1,341 @@
-import { useEffect, useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import SandboxWorkbench from "./sandbox/SandboxWorkbench.jsx";
 import { formatDuration, useCodingTimer } from "./sandbox/sandboxWorkbenchUtils.js";
 import "./Sandbox.css";
 
-/* ─── constants ───────────────────────────────────────────────── */
 const DEFAULT_TEMPLATE_KEY = "blank";
 const TEMPLATE_STORAGE_KEY = "reactforge_active_template";
 
-const BASE_STYLE_FILE = `* {
+const BASE_GLOBAL_CSS = `:root {
+  color: #f8fafc;
+  background: #020617;
+  font-family: "Inter", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
   box-sizing: border-box;
+}
+
+html,
+body,
+#root {
   margin: 0;
-  padding: 0;
+  min-height: 100%;
 }
 
 body {
-  font-family: 'Segoe UI', system-ui, sans-serif;
-  background: #0B0B0F;
-  color: #f2f7ff;
   min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.16), transparent 38%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
 }
 
-.app {
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+`;
+
+const MAIN_FILE = `import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./app.js";
+import "./global.css";
+
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+`;
+
+const makeTemplateFiles = ({ appSource, appCss, globalCss = "" }) => ({
+  "/main.js": MAIN_FILE,
+  "/app.js": appSource,
+  "/global.css": `${BASE_GLOBAL_CSS}${globalCss ? `\n${globalCss.trim()}\n` : ""}`,
+  "/app.css": appCss.trimEnd() + "\n",
+});
+
+const TEMPLATE_LIBRARY = {
+  blank: {
+    label: "Blank",
+    icon: "BL",
+    files: makeTemplateFiles({
+      appSource: `import "./app.css";
+
+export default function App() {
+  return (
+    <main className="app-shell">
+      <section className="panel">
+        <p className="eyebrow">ReactForge</p>
+        <h1>Start building</h1>
+        <p>Use the explorer to add files and folders. The preview runs from main.js like Vite.</p>
+      </section>
+    </main>
+  );
+}
+`,
+      appCss: `.app-shell {
   min-height: 100vh;
   display: grid;
   place-items: center;
   padding: 32px;
 }
-`;
 
-/* ─── template library ────────────────────────────────────────── */
-const TEMPLATE_LIBRARY = {
-  blank: {
-    label: "Blank",
-    icon: "⚛",
-    files: {
-      "/App.js": `import './styles.css'
-
-export default function App() {
-  return (
-    <main className="app">
-      <h1>Start building</h1>
-    </main>
-  )
+.panel {
+  width: min(680px, 100%);
+  border: 1px solid rgba(148, 163, 184, 0.26);
+  border-radius: 28px;
+  background: rgba(15, 23, 42, 0.88);
+  padding: 36px;
+  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.48);
 }
-`,
-      "/styles.css": `${BASE_STYLE_FILE}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
 h1 {
-  font-size: 2rem;
-  font-weight: 600;
-  color: #8fd6ff;
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.4rem);
+}
+
+p {
+  margin: 14px 0 0;
+  line-height: 1.7;
+  color: #cbd5e1;
 }
 `,
-    },
+    }),
   },
   counter: {
     label: "Counter",
-    icon: "🔢",
-    files: {
-      "/App.js": `import { useState } from 'react'
-import './styles.css'
+    icon: "CT",
+    files: makeTemplateFiles({
+      appSource: `import { useState } from "react";
+import "./app.css";
 
 export default function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
 
   return (
-    <main className="app">
-      <section className="panel">
-        <h1>Counter App</h1>
-        <p className="count">{count}</p>
+    <main className="app-shell">
+      <section className="counter-card">
+        <p className="eyebrow">State</p>
+        <h1>{count}</h1>
         <div className="actions">
-          <button onClick={() => setCount(c => c - 1)}>-1</button>
+          <button onClick={() => setCount((value) => value - 1)}>-1</button>
           <button onClick={() => setCount(0)}>Reset</button>
-          <button onClick={() => setCount(c => c + 1)}>+1</button>
+          <button onClick={() => setCount((value) => value + 1)}>+1</button>
         </div>
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  background: #111827;
-  border: 1px solid #24314a;
-  border-radius: 12px;
-  padding: 24px;
-  width: min(420px, 100%);
-  text-align: center;
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
 
-h1 { margin-bottom: 12px; }
-.count {
-  font-size: 3rem;
-  margin-bottom: 14px;
+.counter-card {
+  width: min(420px, 100%);
+  border-radius: 24px;
+  padding: 32px;
+  text-align: center;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(59, 130, 246, 0.26);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.4);
 }
+
+.eyebrow {
+  margin: 0;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+}
+
+h1 {
+  margin: 18px 0;
+  font-size: clamp(3rem, 10vw, 4.5rem);
+}
+
 .actions {
   display: flex;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
+
 button {
-  padding: 8px 12px;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  background: #e2e8f0;
+  color: #020617;
+  cursor: pointer;
 }
 `,
-    },
+    }),
   },
   todo: {
     label: "Todo",
-    icon: "✅",
-    files: {
-      "/App.js": `import { useState } from 'react'
-import './styles.css'
+    icon: "TD",
+    files: makeTemplateFiles({
+      appSource: `import { useState } from "react";
+import "./app.css";
 
 export default function App() {
-  const [text, setText] = useState('')
+  const [text, setText] = useState("");
   const [todos, setTodos] = useState([
-    { id: 1, text: 'Learn useState', done: false },
-    { id: 2, text: 'Build todo app', done: true },
-  ])
+    { id: 1, text: "Learn useState", done: false },
+    { id: 2, text: "Build todo app", done: true },
+  ]);
 
   const addTodo = () => {
-    if (!text.trim()) return
-    setTodos((prev) => [...prev, { id: Date.now(), text, done: false }])
-    setText('')
-  }
+    if (!text.trim()) return;
+    setTodos((current) => [...current, { id: Date.now(), text, done: false }]);
+    setText("");
+  };
 
   return (
-    <main className="app">
-      <section className="panel">
+    <main className="app-shell">
+      <section className="todo-card">
         <h1>Todo List</h1>
-        <div className="row">
-          <input value={text} onChange={(e) => setText(e.target.value)} placeholder="New task" />
+        <div className="todo-row">
+          <input value={text} onChange={(event) => setText(event.target.value)} placeholder="New task" />
           <button onClick={addTodo}>Add</button>
         </div>
         <ul>
           {todos.map((todo) => (
-            <li key={todo.id} className={todo.done ? 'done' : ''}>
-              <span onClick={() => setTodos((prev) => prev.map((t) => t.id === todo.id ? { ...t, done: !t.done } : t))}>
+            <li key={todo.id} className={todo.done ? "done" : ""}>
+              <span onClick={() => setTodos((current) => current.map((item) => item.id === todo.id ? { ...item, done: !item.done } : item))}>
                 {todo.text}
               </span>
-              <button onClick={() => setTodos((prev) => prev.filter((t) => t.id !== todo.id))}>x</button>
+              <button onClick={() => setTodos((current) => current.filter((item) => item.id !== todo.id))}>x</button>
             </li>
           ))}
         </ul>
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  background: #111827;
-  border: 1px solid #24314a;
-  border-radius: 12px;
-  padding: 24px;
-  width: min(520px, 100%);
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
-.row {
+
+.todo-card {
+  width: min(560px, 100%);
+  border-radius: 24px;
+  padding: 28px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+h1 {
+  margin: 0;
+}
+
+.todo-row {
   display: flex;
-  gap: 8px;
-  margin: 12px 0;
+  gap: 10px;
+  margin: 16px 0;
 }
+
 input {
   flex: 1;
-  padding: 8px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.72);
+  color: inherit;
+  padding: 10px 14px;
 }
+
+button {
+  border: none;
+  border-radius: 14px;
+  padding: 10px 14px;
+  cursor: pointer;
+}
+
 ul {
+  margin: 0;
+  padding: 0;
   list-style: none;
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
+
 li {
   display: flex;
+  align-items: center;
   justify-content: space-between;
-  background: #0f1320;
-  border: 1px solid #202b43;
-  padding: 8px;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(30, 41, 59, 0.72);
 }
-.done span {
+
+li span {
+  cursor: pointer;
+}
+
+li.done span {
   text-decoration: line-through;
-  opacity: 0.6;
+  opacity: 0.65;
 }
 `,
-    },
+    }),
   },
   fetch: {
     label: "Fetch",
-    icon: "🌐",
-    files: {
-      "/App.js": `import { useEffect, useState } from 'react'
-import './styles.css'
+    icon: "API",
+    files: makeTemplateFiles({
+      appSource: `import { useEffect, useState } from "react";
+import "./app.css";
 
 export default function App() {
-  const [users, setUsers] = useState([])
-  const [loading, setLoading] = useState(true)
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const run = async () => {
-      const response = await fetch('https://jsonplaceholder.typicode.com/users')
-      const data = await response.json()
-      setUsers(data)
-      setLoading(false)
-    }
+      const response = await fetch("https://jsonplaceholder.typicode.com/users");
+      const data = await response.json();
+      setUsers(data);
+      setLoading(false);
+    };
 
-    run()
-  }, [])
+    run();
+  }, []);
 
   return (
-    <main className="app">
-      <section className="panel">
+    <main className="app-shell">
+      <section className="fetch-card">
         <h1>User Directory</h1>
-        {loading ? <p>Loading...</p> : (
+        {loading ? (
+          <p>Loading...</p>
+        ) : (
           <div className="grid">
             {users.map((user) => (
               <article key={user.id}>
-                <h3>{user.name}</h3>
+                <h2>{user.name}</h2>
                 <p>{user.email}</p>
               </article>
             ))}
@@ -222,31 +343,54 @@ export default function App() {
         )}
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  width: min(900px, 100%);
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
+
+.fetch-card {
+  width: min(960px, 100%);
+  border-radius: 28px;
+  padding: 32px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
+h1 {
+  margin: 0 0 20px;
+}
+
 .grid {
-  margin-top: 12px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 10px;
+  gap: 12px;
 }
+
 article {
-  border: 1px solid #23324d;
-  background: #111827;
-  border-radius: 10px;
-  padding: 12px;
+  border-radius: 18px;
+  padding: 18px;
+  background: rgba(30, 41, 59, 0.72);
+}
+
+h2 {
+  margin: 0 0 8px;
+  font-size: 1rem;
+}
+
+p {
+  margin: 0;
+  color: #cbd5e1;
 }
 `,
-    },
+    }),
   },
 };
 
-/* ─── challenge library ───────────────────────────────────────── */
 const CHALLENGE_LIBRARY = {
   counter: {
     title: "Counter App",
@@ -255,7 +399,7 @@ const CHALLENGE_LIBRARY = {
   },
   todo: {
     title: "Todo List",
-    hint: "Track input state and a todo array, then add/toggle/delete tasks.",
+    hint: "Track input state and a todo array, then add, toggle, and delete tasks.",
     solutionFiles: TEMPLATE_LIBRARY.todo.files,
   },
   fetch: {
@@ -266,147 +410,202 @@ const CHALLENGE_LIBRARY = {
   "theme-toggle": {
     title: "Theme Toggle",
     hint: "Store theme in state and apply a className on the root container.",
-    solutionFiles: {
-      "/App.js": `import { useEffect, useState } from 'react'
-import './styles.css'
+    solutionFiles: makeTemplateFiles({
+      appSource: `import { useEffect, useState } from "react";
+import "./app.css";
 
 export default function App() {
-  const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'dark')
+  const [theme, setTheme] = useState(() => localStorage.getItem("theme") || "dark");
 
   useEffect(() => {
-    localStorage.setItem('theme', theme)
-  }, [theme])
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   return (
-    <main className={\`app \${theme}\`}>
+    <main className={"app-shell " + theme}>
       <section className="panel">
-        <h1>Theme Toggle</h1>
-        <p>Current theme: {theme}</p>
-        <button onClick={() => setTheme((prev) => prev === 'dark' ? 'light' : 'dark')}>
-          Toggle Theme
-        </button>
+        <p className="eyebrow">Theme</p>
+        <h1>{theme === "dark" ? "Dark" : "Light"} mode</h1>
+        <button onClick={() => setTheme((value) => value === "dark" ? "light" : "dark")}>Toggle Theme</button>
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.app.dark { background: #0a0c12; color: #f2f7ff; }
-.app.light { background: #eef3fb; color: #0a1224; }
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+  transition: background 180ms ease, color 180ms ease;
+}
+
+.app-shell.dark {
+  color: #f8fafc;
+}
+
+.app-shell.light {
+  color: #0f172a;
+  background: linear-gradient(180deg, #dbeafe 0%, #f8fafc 100%);
+}
+
 .panel {
-  background: rgba(18, 23, 36, 0.9);
-  border: 1px solid #22314a;
-  border-radius: 12px;
-  padding: 24px;
+  width: min(560px, 100%);
+  border-radius: 28px;
+  padding: 32px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px solid rgba(148, 163, 184, 0.24);
 }
-.app.light .panel {
-  background: #ffffff;
-  border-color: #c8d6ef;
+
+.app-shell.light .panel {
+  background: rgba(255, 255, 255, 0.88);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+}
+
+h1 {
+  margin: 0 0 18px;
+}
+
+button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px;
+  cursor: pointer;
 }
 `,
-    },
+      globalCss: `.app-shell.light button {
+  background: #0f172a;
+  color: #f8fafc;
+}
+`,
+    }),
   },
   "debounced-search": {
     title: "Debounced Search",
     hint: "Keep one state for raw input and another for debounced value with setTimeout.",
-    solutionFiles: {
-      "/App.js": `import { useEffect, useMemo, useState } from 'react'
-import './styles.css'
+    solutionFiles: makeTemplateFiles({
+      appSource: `import { useEffect, useMemo, useState } from "react";
+import "./app.css";
 
-const DATA = ['React', 'Redux', 'Router', 'Render', 'Ref', 'Reducer', 'Request', 'Result']
+const DATA = ["React", "Redux", "Router", "Render", "Ref", "Reducer", "Request", "Result"];
 
 export default function App() {
-  const [query, setQuery] = useState('')
-  const [debouncedQuery, setDebouncedQuery] = useState('')
+  const [query, setQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState("");
 
   useEffect(() => {
-    const id = setTimeout(() => setDebouncedQuery(query), 450)
-    return () => clearTimeout(id)
-  }, [query])
+    const timeoutId = setTimeout(() => setDebouncedQuery(query), 450);
+    return () => clearTimeout(timeoutId);
+  }, [query]);
 
   const results = useMemo(() => {
-    const value = debouncedQuery.trim().toLowerCase()
-    if (!value) return DATA
-    return DATA.filter((item) => item.toLowerCase().includes(value))
-  }, [debouncedQuery])
+    const value = debouncedQuery.trim().toLowerCase();
+    if (!value) return DATA;
+    return DATA.filter((item) => item.toLowerCase().includes(value));
+  }, [debouncedQuery]);
 
   return (
-    <main className="app">
+    <main className="app-shell">
       <section className="panel">
         <h1>Debounced Search</h1>
-        <input value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search topics" />
-        <p>Searching for: {debouncedQuery || 'all'}</p>
+        <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Search topics" />
+        <p>Searching for: {debouncedQuery || "all"}</p>
         <ul>
           {results.map((item) => <li key={item}>{item}</li>)}
         </ul>
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  width: min(500px, 100%);
-  border: 1px solid #22314a;
-  background: #111827;
-  border-radius: 12px;
-  padding: 24px;
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
+
+.panel {
+  width: min(540px, 100%);
+  border-radius: 26px;
+  padding: 30px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
 input {
   width: 100%;
-  margin: 12px 0;
-  padding: 8px;
+  margin: 18px 0 12px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  background: rgba(15, 23, 42, 0.7);
+  color: inherit;
 }
+
+p {
+  margin: 0 0 14px;
+  color: #cbd5e1;
+}
+
 ul {
-  margin-top: 12px;
   list-style: none;
+  margin: 0;
+  padding: 0;
   display: grid;
-  gap: 6px;
+  gap: 8px;
 }
+
 li {
-  background: #111827;
-  border: 1px solid #1f2a42;
-  border-radius: 8px;
-  padding: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.72);
 }
 `,
-    },
+    }),
   },
   "infinite-scroll": {
     title: "Infinite Scroll",
     hint: "Use IntersectionObserver on a sentinel element to append more items when visible.",
-    solutionFiles: {
-      "/App.js": `import { useEffect, useRef, useState } from 'react'
-import './styles.css'
+    solutionFiles: makeTemplateFiles({
+      appSource: `import { useEffect, useRef, useState } from "react";
+import "./app.css";
 
-const createItems = (start, count) => Array.from({ length: count }, (_, i) => \`Item \${ start + i}\`)
+const createItems = (start, count) => Array.from({ length: count }, (_, index) => "Item " + (start + index));
 
 export default function App() {
-  const [items, setItems] = useState(() => createItems(1, 20))
-  const [page, setPage] = useState(1)
-  const sentinelRef = useRef(null)
+  const [items, setItems] = useState(() => createItems(1, 20));
+  const [page, setPage] = useState(1);
+  const sentinelRef = useRef(null);
 
   useEffect(() => {
-    const node = sentinelRef.current
-    if (!node) return
+    const node = sentinelRef.current;
+    if (!node) return undefined;
 
     const observer = new IntersectionObserver((entries) => {
       if (entries[0].isIntersecting) {
-        setPage((prev) => prev + 1)
+        setPage((value) => value + 1);
       }
-    }, { threshold: 1 })
+    }, { threshold: 1 });
 
-    observer.observe(node)
-    return () => observer.disconnect()
-  }, [])
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
-    if (page === 1) return
-    setItems((prev) => [...prev, ...createItems(prev.length + 1, 10)])
-  }, [page])
+    if (page === 1) return;
+    setItems((current) => [...current, ...createItems(current.length + 1, 10)]);
+  }, [page]);
 
   return (
-    <main className="app">
+    <main className="app-shell">
       <section className="panel">
         <h1>Infinite Scroll</h1>
         <ul>
@@ -415,76 +614,106 @@ export default function App() {
         <div ref={sentinelRef} className="sentinel">Load more...</div>
       </section>
     </main>
-  )
+  );
 }
 `,
-      "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  width: min(500px, 100%);
-  border: 1px solid #22314a;
-  background: #111827;
-  border-radius: 12px;
-  padding: 24px;
+      appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
+
+.panel {
+  width: min(540px, 100%);
+  border-radius: 26px;
+  padding: 30px;
+  background: rgba(15, 23, 42, 0.9);
+  border: 1px solid rgba(148, 163, 184, 0.22);
+}
+
 ul {
   list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
   display: grid;
-  gap: 8px;
+  gap: 10px;
   max-height: 420px;
   overflow: auto;
-  margin-top: 12px;
 }
+
 li {
-  background: #111827;
-  border: 1px solid #1f2a42;
-  border-radius: 8px;
-  padding: 8px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  background: rgba(30, 41, 59, 0.72);
 }
+
 .sentinel {
   text-align: center;
-  padding: 12px;
-  color: #9db6d6;
+  padding: 14px 0 0;
+  color: #94a3b8;
 }
 `,
-    },
+    }),
   },
 };
 
-/* ─── helpers ─────────────────────────────────────────────────── */
 const isValidTemplate = (key) =>
   Boolean(key && Object.prototype.hasOwnProperty.call(TEMPLATE_LIBRARY, key));
 const isValidChallenge = (key) =>
   Boolean(key && Object.prototype.hasOwnProperty.call(CHALLENGE_LIBRARY, key));
 
-const makeChallengeStarterFiles = (title) => ({
-  "/App.js": `import './styles.css'
+const makeChallengeStarterFiles = (title) =>
+  makeTemplateFiles({
+    appSource: `import "./app.css";
 
 export default function App() {
   return (
-    <main className="app">
-      <section className="panel">
+    <main className="app-shell">
+      <section className="panel challenge-panel">
+        <p className="eyebrow">Challenge</p>
         <h1>${title}</h1>
-        <p>Start with a blank canvas. Use the hint bar above to guide you.</p>
+        <p>Start with a blank canvas. Use the hint bar above to guide the implementation.</p>
       </section>
     </main>
-  )
+  );
 }
 `,
-  "/styles.css": `${BASE_STYLE_FILE}
-.panel {
-  width: min(680px, 100%);
-  border: 1px dashed #3b4f71;
-  border-radius: 12px;
-  background: #0B0B0F;
-  padding: 26px;
-  text-align: left;
+    appCss: `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
 }
-h1 { margin-bottom: 10px; }
-p { color: #a4b5d3; line-height: 1.6; }
-`,
-});
 
-/* ─── main Sandbox component ──────────────────────────────────── */
+.panel {
+  width: min(720px, 100%);
+  border-radius: 28px;
+  padding: 34px;
+  background: rgba(15, 23, 42, 0.88);
+  border: 1px dashed rgba(148, 163, 184, 0.36);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: #38bdf8;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  font-size: 12px;
+}
+
+h1 {
+  margin: 0;
+}
+
+p {
+  margin: 14px 0 0;
+  color: #cbd5e1;
+  line-height: 1.7;
+}
+`,
+  });
+
 export default function Sandbox() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
@@ -523,11 +752,8 @@ export default function Sandbox() {
     return activeTemplateData.files;
   }, [activeChallenge, activeTemplateData.files, allSolutionsUnlocked, isChallengeMode]);
 
-  const activeLabel = isChallengeMode
-    ? activeChallenge.title
-    : activeTemplateData.label;
+  const activeLabel = isChallengeMode ? activeChallenge.title : activeTemplateData.label;
 
-  /* sync URL */
   useEffect(() => {
     if (isChallengeMode) {
       if (searchParams.get("challenge") !== sandboxState.key || searchParams.get("template")) {
@@ -535,12 +761,12 @@ export default function Sandbox() {
       }
       return;
     }
+
     if (searchParams.get("template") !== sandboxState.key || searchParams.get("challenge")) {
       setSearchParams({ template: sandboxState.key }, { replace: true });
     }
   }, [isChallengeMode, sandboxState.key, searchParams, setSearchParams]);
 
-  /* persist last template */
   useEffect(() => {
     if (!isChallengeMode) {
       localStorage.setItem(TEMPLATE_STORAGE_KEY, sandboxState.key);
@@ -564,40 +790,36 @@ export default function Sandbox() {
       <div className="noise-overlay" />
       <div className="sandbox-grid-bg" />
 
-      {/* ── header ── */}
       <header className="sandbox-header">
         <div className="sandbox-header-left">
-          <button className="sandbox-back-btn" onClick={() => navigate("/")}>
-            ← Home
-          </button>
+          <button className="sandbox-back-btn" onClick={() => navigate("/")}>Home</button>
           <div className="sandbox-logo">
             <div className="sandbox-logo-icon">RF</div>
             <span className="sandbox-logo-text">Sandbox</span>
           </div>
         </div>
 
-        {/* template tabs */}
         <div className="template-tabs">
-          {Object.entries(TEMPLATE_LIBRARY).map(([key, tmpl]) => (
+          {Object.entries(TEMPLATE_LIBRARY).map(([key, template]) => (
             <button
               key={key}
               type="button"
               className={`template-tab ${!isChallengeMode && activeTemplate === key ? "active" : ""}`}
               onClick={() => openTemplate(key)}
             >
-              <span className="template-tab-icon">{tmpl.icon}</span>
-              {tmpl.label}
+              <span className="template-tab-icon">{template.icon}</span>
+              {template.label}
             </button>
           ))}
           <span className="template-tabs-divider" />
-          {Object.entries(CHALLENGE_LIBRARY).slice(0, 3).map(([key, ch]) => (
+          {Object.entries(CHALLENGE_LIBRARY).slice(0, 3).map(([key, challenge]) => (
             <button
               key={key}
               type="button"
               className={`template-tab challenge-tab ${isChallengeMode && sandboxState.key === key ? "active" : ""}`}
               onClick={() => openChallenge(key)}
             >
-              🎯 {ch.title}
+              CH {challenge.title}
             </button>
           ))}
         </div>
@@ -611,11 +833,10 @@ export default function Sandbox() {
         </div>
       </header>
 
-      {/* ── challenge hint bar ── */}
       {isChallengeMode && activeChallenge ? (
         <div className="challenge-hint-bar">
           <div className="hint-content">
-            <span className="hint-chip">💡 Hint</span>
+            <span className="hint-chip">Hint</span>
             <p>{activeChallenge.hint}</p>
           </div>
           <button
@@ -624,12 +845,11 @@ export default function Sandbox() {
             onClick={() => setAllSolutionsUnlocked(true)}
             disabled={allSolutionsUnlocked}
           >
-            {allSolutionsUnlocked ? "✓ Solution Loaded" : "Show Solution"}
+            {allSolutionsUnlocked ? "Solution Loaded" : "Show Solution"}
           </button>
         </div>
       ) : null}
 
-      {/* ── workbench ── */}
       <div className="sandbox-workbench">
         <SandboxWorkbench
           key={`${sandboxState.mode}-${sandboxState.key}-${allSolutionsUnlocked ? "u" : "l"}`}
@@ -642,3 +862,5 @@ export default function Sandbox() {
     </div>
   );
 }
+
+

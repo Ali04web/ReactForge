@@ -1,13 +1,112 @@
-import { useEffect, useRef, useState } from "react";
+﻿import { useEffect, useRef, useState } from "react";
 
 const CODING_TIMER_STORAGE_KEY = "reactforge_coding_metrics";
 const CODING_IDLE_THRESHOLD_MS = 45_000;
 
+const VITE_MAIN_JS_SCAFFOLD = `import { StrictMode } from "react";
+import { createRoot } from "react-dom/client";
+import App from "./app.js";
+import "./global.css";
+
+createRoot(document.getElementById("root")).render(
+  <StrictMode>
+    <App />
+  </StrictMode>
+);
+`;
+
+const VITE_APP_JS_SCAFFOLD = `import "./app.css";
+
+export default function App() {
+  return (
+    <main className="app-shell">
+      <section className="panel">
+        <p className="eyebrow">ReactForge</p>
+        <h1>Start building</h1>
+        <p>Edit app.js, app.css, or global.css.</p>
+      </section>
+    </main>
+  );
+}
+`;
+
+const VITE_GLOBAL_CSS_SCAFFOLD = `:root {
+  color: #f8fafc;
+  background: #020617;
+  font-family: "Inter", system-ui, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(59, 130, 246, 0.16), transparent 38%),
+    linear-gradient(180deg, #020617 0%, #0f172a 100%);
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+`;
+
+const VITE_APP_CSS_SCAFFOLD = `.app-shell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.panel {
+  width: min(640px, 100%);
+  border: 1px solid rgba(148, 163, 184, 0.24);
+  border-radius: 24px;
+  background: rgba(15, 23, 42, 0.88);
+  padding: 32px;
+  box-shadow: 0 30px 80px rgba(2, 6, 23, 0.48);
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #38bdf8;
+}
+
+h1 {
+  margin: 0;
+  font-size: clamp(2rem, 6vw, 3.25rem);
+}
+
+p {
+  margin: 12px 0 0;
+  color: #cbd5e1;
+  line-height: 1.6;
+}
+`;
+
 export const WORKSPACE_ROOT_LABEL = "reactforge-lab";
 
 export const ACTIVITY_ITEMS = [
-  { key: "explorer", label: "Explorer", icon: "🗂" },
-  { key: "insights", label: "Focus", icon: "⏱" },
+  { key: "explorer", label: "Explorer", icon: "EX" },
+  { key: "insights", label: "Focus", icon: "TM" },
 ];
 
 const FILE_ICON_BY_EXTENSION = {
@@ -136,11 +235,28 @@ export const formatCompactDuration = (milliseconds) => {
   return `${minutes}m`;
 };
 
-export const getFileIcon = (path) => FILE_ICON_BY_EXTENSION[getFileExtension(path)] || "•";
+export const getFileIcon = (path) => FILE_ICON_BY_EXTENSION[getFileExtension(path)] || "*";
 export const getLanguageLabel = (path) => FILE_LABEL_BY_EXTENSION[getFileExtension(path)] || "Text";
 
 export const getDefaultFileContent = (path) => {
   const extension = getFileExtension(path);
+  const fileName = getFileNameFromPath(path).toLowerCase();
+
+  if (fileName === "main.js" || fileName === "main.jsx") {
+    return VITE_MAIN_JS_SCAFFOLD;
+  }
+
+  if (fileName === "app.js" || fileName === "app.jsx") {
+    return VITE_APP_JS_SCAFFOLD;
+  }
+
+  if (fileName === "global.css") {
+    return VITE_GLOBAL_CSS_SCAFFOLD;
+  }
+
+  if (fileName === "app.css") {
+    return VITE_APP_CSS_SCAFFOLD;
+  }
 
   if (extension === "css") {
     return "/* Add styles here */\n";
@@ -373,3 +489,4 @@ export function useCodingTimer(workspaceId) {
 
   return timer;
 }
+

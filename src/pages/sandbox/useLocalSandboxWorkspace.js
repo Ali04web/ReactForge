@@ -1,10 +1,12 @@
 ﻿import { useEffect, useMemo, useState } from "react";
 import { getFileEntryCode, normalizeFilePath } from "./sandboxWorkbenchUtils.js";
 
-const PREVIEW_MESSAGE_SOURCE = "reactforge-preview";
+export const PREVIEW_MESSAGE_SOURCE = "reactforge-preview";
+export const TERMINAL_MESSAGE_SOURCE = "reactforge-terminal";
+
 const WORKSPACE_STORAGE_PREFIX = "reactforge_local_workspace";
-const DEFAULT_ACTIVE_FILE = "/App.js";
-const DEFAULT_VISIBLE_FILES = ["/App.js", "/styles.css"];
+const DEFAULT_ACTIVE_FILE = "/app.js";
+const DEFAULT_VISIBLE_FILES = ["/main.js", "/app.js", "/global.css", "/app.css"];
 const MODULE_EXTENSIONS = [".jsx", ".js", ".tsx", ".ts"];
 const PREVIEW_IMPORTS = {
   react: "https://esm.sh/react@19.2.0?dev",
@@ -82,7 +84,7 @@ export const findPreviewEntryFile = (files, preferredFile) => {
     return preferredCandidate;
   }
 
-  const fallbacks = ["/App.jsx", "/App.js", "/main.jsx", "/main.js"];
+  const fallbacks = ["/main.jsx", "/main.js", "/app.jsx", "/app.js", "/App.jsx", "/App.js"];
   for (const candidate of fallbacks) {
     const filePath = findMatchingFile(files, candidate);
     if (filePath) return filePath;
@@ -285,10 +287,56 @@ export const createPreviewDocument = (files, entryFile, refreshNonce) => {
         return [...dependencies];
       };
 
+      const safeStringify = (value) => {
+        const seen = new WeakSet();
+        return JSON.stringify(
+          value,
+          (key, nextValue) => {
+            if (typeof nextValue === "function") {
+              return "[Function " + (nextValue.name || "anonymous") + "]";
+            }
+
+            if (typeof nextValue === "object" && nextValue !== null) {
+              if (seen.has(nextValue)) {
+                return "[Circular]";
+              }
+              seen.add(nextValue);
+            }
+
+            return nextValue;
+          },
+          2
+        );
+      };
+
+      const formatValue = (value) => {
+        if (value instanceof Error) {
+          return value.stack || value.message;
+        }
+
+        if (typeof value === "string") return value;
+        if (typeof value === "undefined") return "undefined";
+
+        try {
+          return safeStringify(value);
+        } catch {
+          return String(value);
+        }
+      };
+
+      const getCssPriority = (path) => {
+        if (path.endsWith("/global.css")) return 0;
+        if (path.endsWith("/app.css")) return 1;
+        return 2;
+      };
+
       const buildStyleText = () =>
         Object.keys(files)
           .filter((path) => path.endsWith(".css"))
-          .sort((left, right) => left.localeCompare(right))
+          .sort((left, right) => {
+            const priorityDifference = getCssPriority(left) - getCssPriority(right);
+            return priorityDifference !== 0 ? priorityDifference : left.localeCompare(right);
+          })
           .map((path) => "/* " + path + " */\\n" + files[path])
           .join("\\n\\n");
 
@@ -324,6 +372,24 @@ export const createPreviewDocument = (files, entryFile, refreshNonce) => {
         return "https://esm.sh/" + specifier + "?dev";
       };
 
+      const attachConsoleBridge = () => {
+        ["log", "info", "warn", "error", "debug"].forEach((level) => {
+          const original = console[level]?.bind(console);
+          if (!original) return;
+
+          console[level] = (...args) => {
+            original(...args);
+            postPreviewMessage("console", {
+              level,
+              args: args.map((value) => formatValue(value)),
+            });
+          };
+        });
+      };
+
+      attachConsoleBridge();
+      window.__reactforge = { files, rootElement, importMap: externalImports };
+
       window.addEventListener("error", (event) => {
         renderError(event.message || "Runtime error", event.error?.stack || event.message || "Unknown runtime error");
       });
@@ -331,6 +397,18 @@ export const createPreviewDocument = (files, entryFile, refreshNonce) => {
       window.addEventListener("unhandledrejection", (event) => {
         const reason = event.reason;
         renderError("Unhandled promise rejection", reason?.stack || String(reason || "Unknown rejection"));
+      });
+
+      window.addEventListener("message", async (event) => {
+        const data = event.data;
+        if (data?.source !== "${TERMINAL_MESSAGE_SOURCE}" || data.type !== "eval") return;
+
+        try {
+          const result = await Promise.resolve((0, eval)(data.command));
+          postPreviewMessage("command-result", { id: data.id, result: formatValue(result) });
+        } catch (error) {
+          postPreviewMessage("command-error", { id: data.id, result: formatValue(error) });
+        }
       });
 
       const ensureModule = async (filePath) => {
@@ -398,10 +476,15 @@ export const createPreviewDocument = (files, entryFile, refreshNonce) => {
       const boot = async () => {
         try {
           styleElement.textContent = buildStyleText();
-          const entryPath = findModulePath(preferredEntry) || findModulePath("/App.js") || findModulePath("/App.jsx");
+          const entryPath =
+            findModulePath(preferredEntry) ||
+            findModulePath("/main.js") ||
+            findModulePath("/main.jsx") ||
+            findModulePath("/app.js") ||
+            findModulePath("/app.jsx");
 
           if (!entryPath) {
-            throw new Error("No entry component found. Create /App.js or /App.jsx.");
+            throw new Error("No entry module found. Create /main.js or /main.jsx.");
           }
 
           const entryUrl = await ensureModule(entryPath);
@@ -411,19 +494,17 @@ export const createPreviewDocument = (files, entryFile, refreshNonce) => {
           const exported =
             entryModule.default ||
             entryModule.App ||
-            Object.values(entryModule).find((value) => typeof value === "function" || typeof value === "object");
+            Object.values(entryModule).find((value) => typeof value === "function" || (value && typeof value === "object" && value.$$typeof));
 
-          if (!exported) {
-            throw new Error(entryPath + " must export a React component.");
+          if (exported) {
+            const root = ReactDomClient.createRoot(rootElement);
+            const renderedNode = typeof exported === "function"
+              ? ReactModule.createElement(exported)
+              : exported;
+            root.render(renderedNode);
           }
 
-          const root = ReactDomClient.createRoot(rootElement);
-          const renderedNode = typeof exported === "function"
-            ? ReactModule.createElement(exported)
-            : exported;
-
           clearError();
-          root.render(renderedNode);
           postPreviewMessage("ready", { entryFile: entryPath });
         } catch (error) {
           renderError(error.message || "Preview failed to start", error.stack || String(error));
@@ -601,4 +682,5 @@ export function useLocalSandboxWorkspace({
     updateFile,
   };
 }
+
 
